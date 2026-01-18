@@ -1,27 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, MouseEvent, DragEvent, CSSProperties } from 'react';
 import { marked } from 'marked';
+
+interface CardSideContent {
+  text: string;
+  context1?: string;
+  context2?: string;
+}
+
+export interface CardData {
+  front: CardSideContent;
+  back: CardSideContent;
+}
+
+interface CardProps {
+  card: CardData;
+  flipped: boolean;
+  isTopCard: boolean;
+  animation?: 'right' | 'left';
+  onAnimationEnd?: () => void;
+  userKnewCard?: (knew: boolean) => void;
+  toggleVisibleSide?: (event: MouseEvent<HTMLDivElement>) => void;
+}
 
 /**
  * A rendered card (either the current card, or the one beneath it).
  * This is a purely presentational component, controlled by its parent (Deck).
  */
-const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCard, toggleVisibleSide }) => {
-    const [visibility, setVisibility] = useState('visible');
-    const [dragStartX, setDragStartX] = useState(-1);
+const Card: React.FC<CardProps> = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCard, toggleVisibleSide }) => {
+    const [visibility, setVisibility] = useState<CSSProperties['visibility']>('visible');
+    const [dragStartX, setDragStartX] = useState<number>(-1);
 
-    const handleClick = (e) => {
+    const handleClick = (e: MouseEvent<HTMLDivElement>) => {
         if (toggleVisibleSide) {
             toggleVisibleSide(e);
         }
     };
 
-    const handleDrag = (e) => {
+    const handleDrag = (e: DragEvent<HTMLDivElement>) => {
         if (!isTopCard) return;
         setVisibility('hidden');
         setDragStartX(e.screenX);
     };
 
-    const handleDragEnd = (e) => {
+    const handleDragEnd = (e: DragEvent<HTMLDivElement>) => {
         if (!isTopCard) return;
         const delta = e.screenX - dragStartX;
 
@@ -43,23 +64,21 @@ const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCar
 
     const side = flipped ? card.back : card.front;
 
-    const cardStyle = {
+    const cardStyle: CSSProperties = {
         visibility: visibility
     };
 
-    let context1 = side.context1;
-    context1 = context1 ? marked(context1) : context1; // marked requires a string, handles null/undefined
-    const context1Style = {
-        display: context1 ? 'block' : 'none'
+    const markedContext1 = side.context1 ? marked(side.context1) : undefined;
+    const context1Style: CSSProperties = {
+        display: markedContext1 ? 'block' : 'none'
     };
 
-    let context2 = side.context2;
-    context2 = context2 ? marked(context2) : context2; // marked requires a string, handles null/undefined
-    const context2Style = {
-        display: context2 ? 'block' : 'none'
+    const markedContext2 = side.context2 ? marked(side.context2) : undefined;
+    const context2Style: CSSProperties = {
+        display: markedContext2 ? 'block' : 'none'
     };
 
-    const frontHintStyle = {
+    const frontHintStyle: CSSProperties = {
         display: flipped ? 'block' : 'none'
     };
 
@@ -77,7 +96,7 @@ const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCar
                  style={cardStyle}
                  draggable={isTopCard}
                  onClick={handleClick}
-                 onDrag={handleDrag}
+                 onDragStart={handleDrag} // Changed from onDrag to onDragStart for correct behavior
                  onDragEnd={handleDragEnd}
                  onAnimationEnd={handleAnimationEnd}
             >
@@ -89,9 +108,9 @@ const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCar
                         <div className="main-card-content">
                             {side.text}
                         </div>
-                        <div className="context-1" style={context1Style} dangerouslySetInnerHTML={{__html: context1}}>
+                        <div className="context-1" style={context1Style} dangerouslySetInnerHTML={{__html: markedContext1 || ''}}>
                         </div>
-                        <div className="context-2" style={context2Style} dangerouslySetInnerHTML={{__html: context2}}>
+                        <div className="context-2" style={context2Style} dangerouslySetInnerHTML={{__html: markedContext2 || ''}}>
                         </div>
                     </div>
                 </div>

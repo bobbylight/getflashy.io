@@ -26,11 +26,19 @@ const store = configureStore({
         config: configReducer,
         decks: decksReducer,
     },
-    // configureStore automatically includes Redux Thunk and sets up the Redux DevTools Extension.
-    // middleware can be customized if needed, but for now, the default is fine.
 });
 
-createRoot(document.getElementById('app-content')).render(
+// Define RootState and AppDispatch types
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+const container = document.getElementById('app-content');
+if (!container) {
+  throw new Error('Failed to find the root element with id "app-content"');
+}
+const root = createRoot(container);
+
+root.render(
     <Provider store={store}>
         <BrowserRouter>
             <Routes>

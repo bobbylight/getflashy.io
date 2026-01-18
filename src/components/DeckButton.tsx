@@ -1,23 +1,30 @@
 import React from 'react';
+import { DeckMetadata } from '../slices/decksSlice';
 
-export class DeckButton extends React.Component {
+interface DeckButtonProps {
+  deck: DeckMetadata; // Now DeckMetadata has size and modified
+  onClick: (deck: DeckMetadata) => void;
+}
 
-    constructor(props) {
+interface DeckButtonState {}
+
+export class DeckButton extends React.Component<DeckButtonProps, DeckButtonState> {
+
+    constructor(props: DeckButtonProps) {
         super(props);
         this.state = {};
     }
 
     render() {
-
-        const deck = this.props.deck;
+        const { deck, onClick } = this.props;
         const date = new Date(deck.modified).toDateString();
-        const icon = deck && deck.icon ? deck.icon.name : 'smile-o';
+        const icon = deck?.icon?.name ?? 'smile-o';
         const style = {
-            color: deck && deck.icon && deck.icon.color ? deck.icon.color : 'black'
+            color: deck?.icon?.color ?? 'black'
         };
 
         return (
-            <div className="deck-button" onClick={ () => this.props.onClick(deck) }>
+            <div className="deck-button" onClick={ () => onClick(deck) }>
                 <div className="deck-details">
                     <div>
                         <div className="deck-icon"><i className={'fa fa-' + icon} style={style} aria-hidden="true"></i></div>

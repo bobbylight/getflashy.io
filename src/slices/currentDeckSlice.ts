@@ -1,14 +1,17 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+// Assuming DeckId is a string, adjust if it's a more complex type
+type DeckId = string | null;
 
 const currentDeckSlice = createSlice({
   name: 'currentDeck',
-  initialState: null, // Initial state for currentDeck
+  initialState: null as DeckId, // Initial state for currentDeck
   reducers: {
-    configureDeck: (state, action) => {
+    configureDeck: (state, action: PayloadAction<string>) => {
       // Assuming action.payload is the deckId, as createSlice actions put their argument into payload
       return action.payload;
     },
-    startDeck: (state, action) => {
+    startDeck: (state, action: PayloadAction<string>) => {
       // Assuming action.payload is the deckId
       return action.payload;
     },

@@ -1,31 +1,44 @@
 import React, { useState } from 'react';
-import { Col, Form, ButtonGroup, Button, Card } from 'react-bootstrap';
-import { useDispatch } from 'react-redux'; // Import useDispatch
-import { useParams, useNavigate } from 'react-router-dom'; // Import useParams and useNavigate
-import { startDeck as setCurrentDeck } from '../slices/currentDeckSlice'; // Import startDeck for currentDeck
-import { setDeckConfig } from '../slices/configSlice'; // Import setDeckConfig
+import { Col, Form, ButtonGroup, Button, Card as BootstrapCard } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
+import { useParams, useNavigate } from 'react-router-dom';
+import { startDeck as setCurrentDeck } from '../slices/currentDeckSlice';
+import { setDeckConfig } from '../slices/configSlice';
+import { AppDispatch } from '../main';
+import { ConfigState } from '../slices/configSlice';
 
-function DeckConfig() { // No props needed anymore
-    const [showSide, setShowSideState] = useState('front');
-    const [randomize, setRandomize] = useState(true);
-    const [showDetails, setShowDetails] = useState('always'); // Assuming 'always' as default
+interface DeckConfigParams {
+  deckId?: string;
+  [key: string]: string | undefined;
+}
 
-    const dispatch = useDispatch();
-    const navigate = useNavigate(); // Initialize navigate hook
-    const { deckId } = useParams(); // Get deckId from URL parameters
+function DeckConfig() {
+    const [showSide, setShowSideState] = useState<'front' | 'back'>('front');
+    const [randomize, setRandomize] = useState<boolean>(true);
+    const [showDetails, setShowDetails] = useState<'always' | 'never' | 'beforeFlipping'>('always');
 
-    const handleStartDeck = () => { // Renamed from startDeck to handleStartDeck
-        const config = {
-            showSide,
+    const dispatch: AppDispatch = useDispatch();
+    const navigate = useNavigate();
+    const { deckId } = useParams<DeckConfigParams>();
+
+    const handleStartDeck = () => {
+        if (!deckId) {
+            console.error("Deck ID is missing!");
+            navigate('/');
+            return;
+        }
+
+        const config: ConfigState = {
             randomize,
-            showDetails // Include showDetails in config
+            showSide,
+            showDetails,
         };
-        dispatch(setCurrentDeck(deckId)); // Dispatch action to set currentDeck
-        dispatch(setDeckConfig(config)); // Dispatch action to set config
-        navigate(`/decks/${deckId}`); // Navigate to the decks page
+        dispatch(setCurrentDeck(deckId));
+        dispatch(setDeckConfig(config));
+        navigate(`/decks/${deckId}`);
     };
 
-    const handleSetShowSide = (side) => {
+    const handleSetShowSide = (side: 'front' | 'back') => {
         setShowSideState(side);
     };
 
@@ -33,22 +46,22 @@ function DeckConfig() { // No props needed anymore
         setRandomize(!randomize);
     };
 
-    const handleSetShowDetails = (detailOption) => {
+    const handleSetShowDetails = (detailOption: 'always' | 'never' | 'beforeFlipping') => {
         setShowDetails(detailOption);
     };
 
     return (
         <div className="container">
-            <Card className="app-form">
-                <Card.Header className="config-header" fill="true">
+            <BootstrapCard className="app-form">
+                <BootstrapCard.Header className="config-header">
                     <h2>Get Ready!</h2>
                     <p>
                         Let us know how you'd like to go through this deck of flashcards.
                     </p>
-                </Card.Header>
+                </BootstrapCard.Header>
 
-                <Card.Body>
-                    <Form horizontal="true">
+                <BootstrapCard.Body>
+                    <Form>
 
                         <Form.Group as={Col} controlId="formShowSide" className="mb-3">
                             <Form.Label column sm={3} className="config-label">Show me:</Form.Label>
@@ -90,12 +103,12 @@ function DeckConfig() { // No props needed anymore
                         </Form.Group>
 
                     </Form>
-                </Card.Body>
+                </BootstrapCard.Body>
 
-                <Card.Footer className="config-submit-button-area">
+                <BootstrapCard.Footer className="config-submit-button-area">
                     <Button variant="success" onClick={handleStartDeck}>Start flipping!</Button>
-                </Card.Footer>
-            </Card>
+                </BootstrapCard.Footer>
+            </BootstrapCard>
         </div>
     );
 }

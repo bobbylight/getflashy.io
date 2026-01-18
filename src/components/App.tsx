@@ -1,14 +1,13 @@
-import { Outlet, useParams } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import AppNavbar from './Navbar';
 import { fetchDeckMetadata } from '../slices/decksSlice';
 import { useDispatch } from 'react-redux';
 import React, { useEffect } from 'react';
+import { AppDispatch } from '../main';
 
 export default function App() {
-    const dispatch = useDispatch();
-    const params = useParams();
-
-    const deckId = params.deck; // Accessing the 'deck' parameter
+    const dispatch: AppDispatch = useDispatch();
+    //const params = useParams<AppParams>();
 
     useEffect(() => {
         dispatch(fetchDeckMetadata());
