@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useImperativeHandle } from 'react'; // Added hooks
-import marked from 'marked';
+import { marked } from 'marked';
 
 /**
  * A rendered card (either the current card, or the one beneath it).
