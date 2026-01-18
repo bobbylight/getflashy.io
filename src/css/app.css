@@ -1,5 +1,7 @@
-@card-border: darkgrey;
-@less-important-text-color: gray;
+:root {
+  --card-border: darkgrey;
+  --less-important-text-color: gray;
+}
 
 html, body {
   height: 100%;
@@ -13,7 +15,7 @@ html, body {
   }
 
   .main-content {
-    height: ~"calc(100% - 60px - 20px)"; // Leave space for navbar
+    height: calc(100% - 60px - 20px); /* Leave space for navbar */
     overflow-x: hidden;
   }
 }
@@ -27,7 +29,7 @@ html, body {
     text-align: center;
   }
   @media screen and (min-width: 991px) {
-    max-width: ~"calc(400px + 400px + 4 * 1rem)";
+    max-width: calc(400px + 400px + 4 * 1rem);
   }
 
   .deck-button {
@@ -35,7 +37,7 @@ html, body {
     vertical-align: middle;
     text-align: center;
     background: #f0f0f0;
-    border: 1px solid @card-border;
+    border: 1px solid var(--card-border);
     border-radius: 3px;
 
     transition-property: color, background;
@@ -65,6 +67,32 @@ html, body {
     }
   }
 
+}
+
+@keyframes slide-right {
+  from {
+    opacity: 1;
+    margin-left: 0;
+    width: 100%;
+  }
+  to {
+    opacity: 0;
+    margin-left: 500px;
+    width: 100%;
+  }
+}
+
+@keyframes slide-left {
+  from {
+    opacity: 1;
+    margin-left: 0;
+    width: 100%;
+  }
+  to {
+    opacity: 0;
+    margin-left: -500px;
+    width: 100%;
+  }
 }
 
 .deck {
@@ -103,32 +131,6 @@ html, body {
     }
   }
 
-  @keyframes slide-right {
-    from {
-      opacity: 1;
-      margin-left: 0;
-      width: 100%;
-    }
-    to {
-      opacity: 0;
-      margin-left: 500px;
-      width: 100%;
-    }
-  }
-
-  @keyframes slide-left {
-    from {
-      opacity: 1;
-      margin-left: 0;
-      width: 100%;
-    }
-    to {
-      opacity: 0;
-      margin-left: -500px;
-      width: 100%;
-    }
-  }
-
   .card-wrapper {
 
     margin: 0 auto;
@@ -140,7 +142,7 @@ html, body {
     .card {
 
       &.sliding-right {
-        //transition: margin-left 5s ease-in-out;
+      /*transition: margin-left 5s ease-in-out;*/
         animation-duration: .5s;
         animation-name: slide-right;
       }
@@ -150,15 +152,15 @@ html, body {
         animation-name: slide-left;
       }
 
-      .card-top { // Just a decoration at the top of a card
+      .card-top { /* Just a decoration at the top of a card */
         width: 100%;
         height: 4rem;
         background: #39399a;
-        border-bottom: 1px solid @card-border;
+        border-bottom: 1px solid var(--card-border);
       }
 
       .card-content {
-        height: ~"calc(100% - 4rem - 2rem)"; // .card-top and .frontHint
+        height: calc(100% - 4rem - 2rem); /* .card-top and .frontHint */
         display: flex;
         justify-content: center;
 
@@ -178,21 +180,21 @@ html, body {
           }
           .context-2 {
             margin-top: 1rem;
-            color: @less-important-text-color;
+            color: var(--less-important-text-color);
           }
         }
       }
 
       .frontHint {
-        color: @less-important-text-color;
+        color: var(--less-important-text-color);
         font-style: italic;
-        height: 2rem; // Ugh, getting around bootstrap px-vs-rem issue here.  Should be fixed in Bootstrap 4
+        height: 2rem; /* Ugh, getting around bootstrap px-vs-rem issue here.  Should be fixed in Bootstrap 4 */
         text-align: right;
         margin-right: 1rem;
       }
 
       height: 300px;
-      border: 1px solid @card-border;
+      border: 1px solid var(--card-border);
       margin-bottom: 1rem;
       background: white;
       box-shadow: 5px 5px 5px #f0f0f0;
@@ -209,7 +211,7 @@ html, body {
   width: 680px;
 
   .config-header {
-    border-bottom: 1px solid #ecf0f1; // Matches panel border
+    border-bottom: 1px solid #ecf0f1; /* Matches panel border */
     padding: 0 1rem;
     text-align: center;
   }
@@ -239,7 +241,7 @@ html, body {
   top: 1rem;
   right: 1rem;
   padding: 0 6px 0 6px;
-  //background: #fff0f0;
+  /*background: #fff0f0;*/
   border: 2px solid #202020;
   border-radius: 3rem;
 }

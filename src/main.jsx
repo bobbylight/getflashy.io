@@ -18,7 +18,7 @@ import createLogger from 'redux-logger'; // Log actions
 import 'bootswatch/flatly/bootstrap.css';
 
 import 'font-awesome/css/font-awesome.css';
-import '../less/app.less';
+import './css/app.css';
 import 'react-progress-bar-plus/lib/progress-bar.css';
 
 const loggerMiddleware = createLogger();
