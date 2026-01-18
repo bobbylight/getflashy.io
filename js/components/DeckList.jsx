@@ -1,7 +1,6 @@
 import React from 'react';
 import DeckButton from './DeckButton';
 import DeckFilter from './DeckFilter';
-import _ from 'lodash';
 
 class DeckList extends React.Component {
 
