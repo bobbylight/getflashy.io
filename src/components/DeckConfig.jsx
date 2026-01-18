@@ -40,7 +40,7 @@ function DeckConfig() { // No props needed anymore
     return (
         <div className="container">
             <Card className="app-form">
-                <Card.Header className="config-header" fill>
+                <Card.Header className="config-header" fill="true">
                     <h2>Get Ready!</h2>
                     <p>
                         Let us know how you'd like to go through this deck of flashcards.
@@ -48,7 +48,7 @@ function DeckConfig() { // No props needed anymore
                 </Card.Header>
 
                 <Card.Body>
-                    <Form horizontal>
+                    <Form horizontal="true">
 
                         <Form.Group as={Col} controlId="formShowSide" className="mb-3">
                             <Form.Label column sm={3} className="config-label">Show me:</Form.Label>
