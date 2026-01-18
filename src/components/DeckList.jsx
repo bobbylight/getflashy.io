@@ -1,48 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { configureDeck } from '../slices/currentDeckSlice'; // Import configureDeck action
 import DeckButton from './DeckButton';
 import DeckFilter from './DeckFilter';
 
-class DeckList extends React.Component {
+function DeckList() {
+    const [deckFilter, setDeckFilter] = useState('');
+    const allDecks = useSelector((state) => state.decks.data); // Get all decks from Redux state
+    const dispatch = useDispatch();
+    const navigate = useNavigate(); // Initialize navigate hook
 
-    constructor(props) {
-        super(props);
-        this.state = { deckId: '', deckFilter: '' };
+    const onDeckFilterChange = (filter) => {
+        setDeckFilter(filter);
+    };
 
-        // Manually bind this method to the component instance so "this" is what we expect
-        this.onDeckFilterChange = this.onDeckFilterChange.bind(this);
-    }
+    const handleDeckClick = (deck) => {
+        dispatch(configureDeck(deck.id));
+        navigate(`/config/${deck.id}`); // Navigate after dispatching action
+    };
 
-    componentDidMount() {
-    }
+    // Filter decks based on deckFilter state
+    const filteredDecks = Object.values(allDecks).filter(deck =>
+        deck.name.toLowerCase().includes(deckFilter.toLowerCase())
+    );
 
-    onDeckFilterChange(filter) {
-        this.setState({ deckFilter: filter });
-    }
-
-    render() {
-
-        var self = this;
-        var filteredDecks = [];
-        Object.keys(this.props.decks).forEach(function(key) {
-            var deck = self.props.decks[key];
-            if (deck.name.toLowerCase().indexOf(self.state.deckFilter) > -1) {
-                filteredDecks.push(deck);
-            }
-        });
-
-        return (
-            <div className="container">
-                <DeckFilter label="Filter decks:" helpText={this.state.deckId} onChange={this.onDeckFilterChange}/>
-                    <div className="deck-buttons">
-                    {
-                        Object.keys(filteredDecks).map(function(key) {
-                            return <DeckButton key={key} deck={filteredDecks[key]} onClick={self.props.onDeckClick}/>
-                        })
-                    }
-                    </div>
+    return (
+        <div className="container">
+            <DeckFilter label="Filter decks:" helpText="" onChange={onDeckFilterChange} />
+            <div className="deck-buttons">
+                {filteredDecks.map((deck) => (
+                    <DeckButton key={deck.id} deck={deck} onClick={() => handleDeckClick(deck)} />
+                ))}
             </div>
-        );
-    }
+        </div>
+    );
 }
 
 export default DeckList;

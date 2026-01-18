@@ -1,42 +1,25 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import { Outlet, useParams } from 'react-router-dom';
 import AppNavbar from './Navbar';
-import { fetchDeckMetadata } from '../actions';
-import { browserHistory } from 'react-router';
+import { fetchDeckMetadata } from '../slices/decksSlice';
+import { useDispatch } from 'react-redux';
+import React, { useEffect } from 'react';
 
-class App extends React.Component {
+export default function App() {
+    const dispatch = useDispatch();
+    const params = useParams();
 
-    constructor(props) {
+    const deckId = params.deck; // Accessing the 'deck' parameter
 
-        super(props);
+    useEffect(() => {
+        dispatch(fetchDeckMetadata());
+    }, [dispatch]);
 
-        this.state = {
-            state: 'select-deck',
-            deck: ''
-        };
-    }
-
-    componentDidMount() {
-        this.props.dispatch(fetchDeckMetadata());
-    }
-
-    render() {
-
-        // We use URL param instead of this.props.currentDeckId so bookmarking works
-        var deckId = this.props.params.deck;
-
-        return (
-            <div>
-
-                <AppNavbar/>
-
-                <div className="container-fluid main-content">
-                    {this.props.children}
-                </div>
+    return (
+        <div>
+            <AppNavbar/>
+            <div className="container-fluid main-content">
+                <Outlet />
             </div>
-        );
-    }
+        </div>
+    );
 }
-
-App = connect()(App); // Needed to "inject" dispatch() (!!)
-export default App;

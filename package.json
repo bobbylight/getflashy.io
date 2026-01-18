@@ -14,22 +14,20 @@
     "node": ">=18"
   },
   "dependencies": {
-    "bootstrap": "^3.3.7",
-    "bootswatch": "^3.3.7",
+    "@reduxjs/toolkit": "^2.11.2",
+    "bootstrap": "5.3.8",
+    "bootswatch": "5.3.8",
     "compression": "^1.6.2",
     "express": "5.2.1",
     "font-awesome": "^4.6.3",
     "jquery": "^3.1.1",
     "marked": "^0.3.6",
-    "react": "^15.3.2",
-    "react-bootstrap": "^0.30.3",
-    "react-dom": "^15.3.2",
-    "react-progress-bar-plus": "^1.2.0",
-    "react-redux": "^4.4.5",
-    "redux": "^3.6.0",
-    "redux-logger": "^2.6.1",
-    "redux-thunk": "2.1.0",
-    "react-router": "^2.8.1"
+    "react": "^19.0.0",
+    "react-bootstrap": "^2.10.1",
+    "react-dom": "^19.0.0",
+    "react-redux": "^9.0.0",
+    "react-router": "^6.22.1",
+    "react-router-dom": "^6.22.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
