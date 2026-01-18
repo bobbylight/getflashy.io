@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef, useImperativeHandle } from 'react'; // Added hooks
-import marked from 'marked';
+import { marked } from 'marked';
 
 /**
  * A rendered card (either the current card, or the one beneath it).
  */
 // Card needs to be wrapped with forwardRef to receive the ref from Deck.jsx
 const Card = React.forwardRef(({ card, flipped, advance, toggleVisibleSide }, ref) => {
-    // Local state, replacing this.state
     const [cardFlippedState, setCardFlippedState] = useState(false); // Using a different name to avoid confusion with prop 'flipped'
     const [visibility, setVisibility] = useState('visible');
     const [dragStartX, setDragStartX] = useState(-1);
@@ -46,7 +45,6 @@ const Card = React.forwardRef(({ card, flipped, advance, toggleVisibleSide }, re
         },
     }));
 
-    // Reintroduce keydown handler for flipping the card (ArrowUp/ArrowDown)
     useEffect(() => {
         if (!advance) { // Only attach keydown listener if this is the top card (indicated by advance prop)
             return;
