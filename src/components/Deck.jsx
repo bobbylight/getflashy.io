@@ -91,7 +91,6 @@ function Deck() {
             }
         };
 
-        // Note: jQuery was used for keydown handling. Using native addEventListener now.
         document.addEventListener('keydown', handleKeyDown);
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
