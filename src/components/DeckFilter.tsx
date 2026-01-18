@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
-import { Form } from 'react-bootstrap'; // Only Form component is needed now
+import React, { useState, ChangeEvent } from 'react';
+import { Form } from 'react-bootstrap';
 
-function DeckFilter({ label, helpText, onChange }) {
-    const [filter, setFilter] = useState('');
+interface DeckFilterProps {
+  label: string;
+  helpText?: string;
+  onChange: (filter: string) => void;
+}
 
-    const handleFilterChange = (e) => {
+function DeckFilter({ label, helpText, onChange }: DeckFilterProps) {
+    const [filter, setFilter] = useState<string>('');
+
+    const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
         const newFilter = e.target.value;
         setFilter(newFilter);
         if (onChange) {
@@ -20,7 +26,7 @@ function DeckFilter({ label, helpText, onChange }) {
                     type="text"
                     placeholder="Example: State Capitals"
                     onChange={handleFilterChange}
-                    value={filter} // Add value prop for controlled component
+                    value={filter}
                 />
                 <Form.Control.Feedback />
                 <Form.Text className="text-muted">{helpText || ''}</Form.Text>

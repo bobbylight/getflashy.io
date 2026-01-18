@@ -1,14 +1,25 @@
-import React, { useState, useEffect } from 'react'; // Added useState, useEffect, useRef
-import { useSelector, useDispatch } from 'react-redux'; // For Redux state and dispatch
-import { useParams, useNavigate, Link } from 'react-router-dom'; // For route parameters, navigation, Link
-import { fetchDeckMetadata } from '../slices/decksSlice'; // For fetching deck info
-import Card from './Card';
+import React, { useState, useEffect, MouseEvent } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { fetchDeckMetadata } from '../slices/decksSlice';
+import Card, { CardData } from './Card';
 import DeckStatus from './DeckStatus';
-//import ProgressBar from 'react-progress-bar-plus'; // Still commented out
 import Timer from './Timer';
+import { RootState, AppDispatch } from '../main';
+
+// Define interfaces used in this component
+interface FullDeckData {
+  id: string;
+  name: string;
+  icon?: {
+    name: string;
+    color: string;
+  };
+  cards: CardData[];
+}
 
 // Utility function for Fisher-Yates shuffle
-function shuffleArray(array) {
+function shuffleArray<T>(array: T[]): T[] {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
@@ -16,28 +27,39 @@ function shuffleArray(array) {
     return array;
 }
 
+interface DeckParams {
+  deckId?: string;
+  [key: string]: string | undefined;
+}
+
 function Deck() {
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
-    const { deckId: currentDeckIdParam } = useParams(); // Get deckId from URL
+    const { deckId: currentDeckIdParam } = useParams<DeckParams>();
 
     // Redux state
-    const currentDeckRedux = useSelector(state => state.currentDeck); // The ID of the currently selected deck from Redux
-    const allDecks = useSelector(state => state.decks.data); // All decks metadata
-    const config = useSelector(state => state.config); // Configuration for the deck
+    const allDecks = useSelector((state: RootState) => state.decks.data);
+    const config = useSelector((state: RootState) => state.config);
 
     // Local state
-    const [deck, setDeck] = useState(null); // Full deck data, after fetching and configuring
-    const [curCard, setCurCard] = useState(0);
-    const [cardFlipped, setCardFlipped] = useState(false);
-    const [correctCount, setCorrectCount] = useState(0);
-    const [startTime, setStartTime] = useState(null);
-    const [animating, setAnimating] = useState(false);
-    const [animation, setAnimation] = useState(null);
+    const [deck, setDeck] = useState<FullDeckData | null>(null);
+    const [curCard, setCurCard] = useState<number>(0);
+    const [cardFlipped, setCardFlipped] = useState<boolean>(false);
+    const [correctCount, setCorrectCount] = useState<number>(0);
+    const [startTime, setStartTime] = useState<Date | null>(null);
+    const [animating, setAnimating] = useState<boolean>(false);
+    const [animation, setAnimation] = useState<'right' | 'left' | null>(null);
+
+    const userKnewCard = (knew: boolean) => {
+        if (!animating) {
+            setAnimating(true);
+            setAnimation(knew ? 'right' : 'left');
+        }
+    };
 
     // Fetch deck info when component mounts or deckId changes
     useEffect(() => {
-        if (!allDecks[currentDeckIdParam]) { // If deck metadata not in Redux state, fetch it
+        if (currentDeckIdParam && !allDecks[currentDeckIdParam]) { // If deck metadata not in Redux state, fetch it
             dispatch(fetchDeckMetadata()); // Dispatch the async thunk
         }
     }, [currentDeckIdParam, allDecks, dispatch]);
@@ -56,12 +78,11 @@ function Deck() {
                 if (!response.ok) {
                     throw new Error('Failed to fetch specific deck data');
                 }
-                const data = await response.json();
+                const data: FullDeckData = await response.json();
                 
-                let loadedDeck = { ...data }; // Clone to avoid direct mutation
-
+                const loadedDeck = { ...data };
                 if (config.randomize) {
-                    loadedDeck.cards = shuffleArray([...loadedDeck.cards]); // Shuffle cards if randomize is true
+                    loadedDeck.cards = shuffleArray([...loadedDeck.cards]);
                 }
 
                 setDeck(loadedDeck);
@@ -78,12 +99,12 @@ function Deck() {
         };
 
         fetchSpecificDeck();
-    }, [currentDeckIdParam, config.randomize]); // Dependencies: currentDeckIdParam, config.randomize
+    }, [currentDeckIdParam, config.randomize]);
 
 
     // Global keydown handler for all card actions
     useEffect(() => {
-        const handleKeyDown = (e) => {
+        const handleKeyDown = (e: KeyboardEvent) => { // Use globalThis.KeyboardEvent
             // When a card is animating away, don't allow updating the next card before it's done'
             if (animating) {
                 return;
@@ -118,24 +139,24 @@ function Deck() {
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, [animating, cardFlipped]); // Re-run if animating or flipped state changes
+    }, [animating, cardFlipped, deck, userKnewCard]);
 
 
-    const advance = (knewCard) => {
+    const advance = (knewCard: boolean) => {
         setCorrectCount(prevCount => prevCount + (knewCard ? 1 : 0));
 
-        if (curCard < deck.cards.length - 1) {
+        if (deck && curCard < deck.cards.length - 1) {
             setCurCard(prevCard => prevCard + 1);
             setCardFlipped(false);
             setAnimating(false);
-        } else {
+        } else if (deck) { // Only navigate if deck exists
             navigate(`/results/${currentDeckIdParam}`);
         }
     };
 
     const handleAnimationEnd = () => {
         const knew = animation === 'right';
-        setAnimation(null); // Reset animation state
+        setAnimation(null);
         advance(knew);
     };
 
@@ -158,20 +179,13 @@ function Deck() {
         );
     };
 
-    const toggleCardVisibleSide = (e) => {
+    const toggleCardVisibleSide = (e: MouseEvent<HTMLDivElement>) => {
         setCardFlipped(prevFlipped => !prevFlipped);
         e.stopPropagation();
         e.preventDefault();
     };
 
-    const userKnewCard = (knew) => {
-        if (!animating) {
-            setAnimating(true);
-            setAnimation(knew ? 'right' : 'left');
-        }
-    };
-
-    if (deck === null) {
+    if (deck === null || !currentDeckIdParam) {
         return loadingScreen();
     }
     if (!deck.cards || deck.cards.length === 0) {
@@ -182,10 +196,10 @@ function Deck() {
     }
 
 
-    const fillHeight = { height: '100%' };
-    const percent = (curCard / deck.cards.length) * 100;
+    const fillHeight: React.CSSProperties = { height: '100%' };
+    const percent: number = (curCard / deck.cards.length) * 100;
 
-    const nextCardStyle = {
+    const nextCardStyle: React.CSSProperties = {
         zIndex: -100,
         position: 'absolute',
         width: '100%'

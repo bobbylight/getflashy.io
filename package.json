@@ -1,14 +1,15 @@
 {
   "name": "getflashy.io",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "license": "MIT",
   "description": "Source code for getflashy.io",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "start": "node server.js"
+    "start": "node server.js",
+    "typecheck": "tsc --noEmit"
   },
   "engines": {
     "node": ">=18"
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "5.1.2",
+    "typescript": "5.9.3",
     "vite": "7.3.1"
   }
 }

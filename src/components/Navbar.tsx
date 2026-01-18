@@ -1,24 +1,24 @@
 import React from 'react';
-import {Navbar, Nav, NavDropdown, Dropdown, Container} from 'react-bootstrap'; // Dropdown.Item for MenuItem
-import { Link } from 'react-router-dom'; // For navigation
+import {Navbar, Nav, NavDropdown, Dropdown, Container} from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 function AppNavbar() {
     return (
         <Navbar expand="lg" bg="primary" variant="dark">
             <Container>
-                <Navbar.Brand as={Link} to="/"> {/* Use 'as={Link} to="..."' for react-router integration */}
+                <Navbar.Brand as={Link} to="/">
                     <i className="fa fa-bolt" aria-hidden="true"></i> Flashy
                 </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" /> {/* Toggle button */}
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="ms-auto"> {/* ms-auto for right alignment */}
-                        <Nav.Link as={Link} to="#">Link</Nav.Link> {/* Nav.Link replaces NavItem */}
+                    <Nav className="ms-auto">
+                        <Nav.Link as={Link} to="#">Link</Nav.Link>
                         <Nav.Link as={Link} to="#">Link</Nav.Link>
                         <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                            <Dropdown.Item as={Link} to="#">Action</Dropdown.Item> {/* Dropdown.Item replaces MenuItem */}
+                            <Dropdown.Item as={Link} to="#">Action</Dropdown.Item>
                             <Dropdown.Item as={Link} to="#">Another action</Dropdown.Item>
                             <Dropdown.Item as={Link} to="#">Something else here</Dropdown.Item>
-                            <Dropdown.Divider /> {/* Dropdown.Divider replaces MenuItem divider */}
+                            <Dropdown.Divider />
                             <Dropdown.Item as={Link} to="#">Separated link</Dropdown.Item>
                         </NavDropdown>
                     </Nav>
