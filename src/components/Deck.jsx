@@ -1,9 +1,10 @@
-import React from 'react';
-import $ from 'jquery';
+import React, { useState, useEffect, useRef } from 'react'; // Added useState, useEffect, useRef
+import { useSelector, useDispatch } from 'react-redux'; // For Redux state and dispatch
+import { useParams, useNavigate, Link } from 'react-router-dom'; // For route parameters, navigation, Link
+import { fetchDeckMetadata } from '../slices/decksSlice'; // For fetching deck info
 import Card from './Card';
 import DeckStatus from './DeckStatus';
-import { Link } from 'react-router';
-import ProgressBar from 'react-progress-bar-plus';
+//import ProgressBar from 'react-progress-bar-plus'; // Still commented out
 import Timer from './Timer';
 
 // Utility function for Fisher-Yates shuffle
@@ -15,71 +16,106 @@ function shuffleArray(array) {
     return array;
 }
 
-/**
- * The deck of flash cards being worked through and its state.
- */
-class Deck extends React.Component {
+function Deck() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { deckId: currentDeckIdParam } = useParams(); // Get deckId from URL
 
-    constructor(props) {
-        super(props);
-        this.state = { deck: {}, curCard: 0, cardFlipped: false,
-                correctCount: 0, startTime: null, animating: false };
-    }
+    // Redux state
+    const currentDeckRedux = useSelector(state => state.currentDeck); // The ID of the currently selected deck from Redux
+    const allDecks = useSelector(state => state.decks.data); // All decks metadata
+    const config = useSelector(state => state.config); // Configuration for the deck
 
-    componentWillMount() {
-        // this.fetchDeckInfo = _.debounce(this.fetchDeckInfo, 500);
-    }
+    // Local state
+    const [deck, setDeck] = useState(null); // Full deck data, after fetching and configuring
+    const [curCard, setCurCard] = useState(0);
+    const [cardFlipped, setCardFlipped] = useState(false);
+    const [correctCount, setCorrectCount] = useState(0);
+    const [startTime, setStartTime] = useState(null);
+    const [animating, setAnimating] = useState(false);
+    const topCardRef = useRef(null); // Ref for direct card manipulation
 
-    componentDidMount() {
-        this.fetchDeckInfo(this.props.deckId);
-        this.setState({ correctCount: 0, startTime: new Date() });
-    }
-
-    advance(knewCard) {
-
-        const newCorrectCount = knewCard ? this.state.correctCount + 1 : this.state.correctCount;
-
-        if (this.state.curCard < this.state.deck.cards.length - 1) {
-            this.setState({ curCard: this.state.curCard + 1, correctCount: newCorrectCount, cardFlipped: false,
-                    animating: false });
+    // Fetch deck info when component mounts or deckId changes
+    useEffect(() => {
+        if (!allDecks[currentDeckIdParam]) { // If deck metadata not in Redux state, fetch it
+            dispatch(fetchDeckMetadata()); // Dispatch the async thunk
         }
-        else {
-            this.deckCompleted();
+    }, [currentDeckIdParam, allDecks, dispatch]);
+
+    // When currentDeckIdParam changes, fetch and configure the specific deck
+    useEffect(() => {
+        const fetchSpecificDeck = async () => {
+            if (!currentDeckIdParam) {
+                setDeck(null);
+                return;
+            }
+
+            // Fetch full deck data from API
+            try {
+                const response = await fetch(`/api/decks/${currentDeckIdParam}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch specific deck data');
+                }
+                const data = await response.json();
+                
+                let loadedDeck = { ...data }; // Clone to avoid direct mutation
+
+                if (config.randomize) {
+                    loadedDeck.cards = shuffleArray([...loadedDeck.cards]); // Shuffle cards if randomize is true
+                }
+
+                setDeck(loadedDeck);
+                setCurCard(0);
+                setCardFlipped(false);
+                setCorrectCount(0);
+                setStartTime(new Date());
+                setAnimating(false);
+
+            } catch (error) {
+                console.error("Error fetching specific deck:", error);
+                setDeck(null); // Indicate deck not found or error
+            }
+        };
+
+        fetchSpecificDeck();
+    }, [currentDeckIdParam, config.randomize]); // Dependencies: currentDeckIdParam, config.randomize
+
+
+    // Cleanup for keydown handler
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'ArrowLeft') {
+                userKnewCard(false);
+            } else if (e.key === 'ArrowRight') {
+                userKnewCard(true);
+            }
+        };
+
+        // Note: jQuery was used for keydown handling. Using native addEventListener now.
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
+
+
+    const advance = (knewCard) => {
+        setCorrectCount(prevCount => prevCount + (knewCard ? 1 : 0));
+
+        if (curCard < deck.cards.length - 1) {
+            setCurCard(prevCard => prevCard + 1);
+            setCardFlipped(false);
+            setAnimating(false);
+        } else {
+            // Deck completed
+            navigate(`/results/${currentDeckIdParam}`); // Navigate to results
+            // original onDeckCompleted called this.props.onDeckCompleted(this.props.deckId)
+            // The VisibleDeck container used to call showResults action which navigated.
+            // Now navigation is direct, and the results component will receive correct props.
         }
-    }
+    };
 
-    componentWillUnmount() {
-        console.log('Removing key handler...');
-        $(document).off('keydown.deck');
-    }
-
-    configureDeck(deck) {
-
-        if (this.props.config.randomize) {
-            shuffleArray(deck.cards);
-        }
-
-        // TODO: Front or back
-    }
-
-    fetchDeckInfo(deckId) {
-        $.ajax({
-            url: '/api/decks/' + deckId,
-            dataType: 'json',
-            cache: false,
-            success: function(data) {
-                console.log('Successfully loaded deck: ' + deckId);
-                this.configureDeck(data);
-                this.setState({ deck: data });
-            }.bind(this),
-            error: function(xhr, status, err) {
-                this.setState({ deckId: '', curCard: -1 });
-                console.error(deckId, status, err.toString());
-            }.bind(this)
-        });
-    }
-
-    noSuchDeck() {
+    const noSuchDeck = () => {
         return (
             <div className="container">
                 No such deck!
@@ -88,105 +124,95 @@ class Deck extends React.Component {
                 </p>
             </div>
         );
-    }
+    };
 
-    loadingScreen() {
+    const loadingScreen = () => {
         return (
             <div className="container">
                 Loading...
             </div>
         );
-    }
+    };
 
-    deckCompleted() {
-        this.props.onDeckCompleted(this.props.deckId);
-    }
-
-    toggleCardVisibleSide(e) {
-        this.setState({ cardFlipped: !this.state.cardFlipped });
+    const toggleCardVisibleSide = (e) => {
+        setCardFlipped(prevFlipped => !prevFlipped);
         e.stopPropagation();
         e.preventDefault();
+    };
+
+    const userKnewCard = (knew) => {
+        if (!animating) {
+            setAnimating(true);
+            if (topCardRef.current && typeof topCardRef.current.setUserKnew === 'function') {
+                topCardRef.current.setUserKnew(knew);
+            } else {
+                // Fallback or error handling if ref or method not available
+                console.warn("topCardRef or setUserKnew is not available immediately. Proceeding without animation.");
+                advance(knew);
+            }
+        }
+    };
+
+    if (deck === null) {
+        return loadingScreen(); // Deck not found or still loading
+    }
+    if (!deck.cards || deck.cards.length === 0) {
+        return noSuchDeck(); // No cards in deck or deck info not loaded correctly
+    }
+    if (currentDeckIdParam !== deck.id) {
+        // This case handles where URL deckId doesn't match loaded deck (e.g., failed fetch, or routing issue)
+        // or if deck was not fetched due to currentDeckIdParam being invalid.
+        return noSuchDeck();
     }
 
-    userKnewCard(knew) {
-        if (!this.state.animating) {
-            this.setState({animating: true});
-            this.topCard.setUserKnew(knew);
-        }
-    }
 
-    render() {
+    const fillHeight = { height: '100%' };
+    const percent = (curCard / deck.cards.length) * 100;
 
-        if (this.state.curCard === -1) {
-            return this.noSuchDeck();
-        }
-        if (!this.state.deck.cards) {
-            return (<div></div>); // Not yet fetched
-        }
+    const nextCardStyle = {
+        zIndex: -100,
+        position: 'absolute',
+        width: '100%'
+    };
 
-        const fillHeight = { height: '100%' };
-        const percent = this.state.curCard / this.state.deck.cards.length * 100;
+    const card = deck.cards[curCard];
+    const nextCard = curCard < deck.cards.length - 1 ? deck.cards[curCard + 1] : null;
 
-        const nextCardStyle = {
-            zIndex: -100,
-            position: 'absolute',
-            width: '100%'
-        };
 
-        return (
-            <div style={fillHeight}>
+    return (
+        <div style={fillHeight}>
+            <div className="deck">
+                {/*<ProgressBar spinner={false} percent={percent}/>*/}
+                <div className="deck-nav left-nav" onClick={() => userKnewCard(false)}>
+                    <i className="fa fa-chevron-left" aria-hidden="true"></i>
+                </div>
+                <div className="deck-card-section">
+                    <Timer startTime={startTime}></Timer>
+                    {nextCard && (
+                        <div style={nextCardStyle}>
+                            <Card key={nextCard.front.text} card={nextCard} flipped={false} />
+                        </div>
+                    )}
+                    <Card
+                        key={card.front.text}
+                        card={card}
+                        flipped={cardFlipped}
+                        ref={topCardRef} // Assign ref here
+                        advance={advance}
+                        toggleVisibleSide={toggleCardVisibleSide}
+                    />
 
-                {
-
-                    (() => {
-
-                        if (this.state.deck.id) {
-
-                            const cards = this.state.deck.cards;
-                            const card = cards[this.state.curCard];
-                            const nextCard = this.state.curCard < cards.length - 1 ? cards[this.state.curCard + 1] : null;
-
-                            return (
-                                <div className="deck">
-                                    <ProgressBar spinner={false} percent={percent}/>
-                                    <div className="deck-nav left-nav" onClick={() => { this.userKnewCard(false); }}>
-                                        <i className="fa fa-chevron-left" aria-hidden="true"></i>
-                                    </div>
-                                    <div className="deck-card-section">
-                                        <Timer startTime={this.state.startTime}></Timer>
-                                        {(() => {
-                                            if (nextCard) {
-                                                return (
-                                                    <div style={nextCardStyle}>
-                                                        <Card key={nextCard.front.text} card={nextCard} flipped={false}/>
-                                                    </div>
-                                                );
-                                            }
-                                            return '';
-                                        })()
-                                        }
-                                        <Card key={card.front.text} card={card} flipped={this.state.cardFlipped}
-                                                ref={(instance) => { this.topCard = instance; }} advance={this.advance.bind(this)}
-                                                toggleVisibleSide={this.toggleCardVisibleSide.bind(this)}/>
-
-                                        <div>
-                                            <DeckStatus curCard={this.state.curCard + 1} cardCount={cards.length}
-                                                    correctCount={this.state.correctCount}/>
-                                        </div>
-                                    </div>
-                                    <div className="deck-nav right-nav" onClick={() => { this.userKnewCard(true); }}>
-                                        <i className="fa fa-chevron-right" aria-hidden="true" ></i>
-                                    </div>
-                                </div>
-                            )
-                        }
-
-                        return this.loadingScreen();
-                    })()
-                }
+                    <div>
+                        <DeckStatus curCard={curCard + 1} cardCount={deck.cards.length}
+                                correctCount={correctCount} />
+                    </div>
+                </div>
+                <div className="deck-nav right-nav" onClick={() => userKnewCard(true)}>
+                    <i className="fa fa-chevron-right" aria-hidden="true" ></i>
+                </div>
             </div>
-        );
-    }
+        </div>
+    );
 }
 
 export default Deck;

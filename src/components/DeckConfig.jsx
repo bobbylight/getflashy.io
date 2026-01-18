@@ -1,97 +1,103 @@
-import React from 'react';
-// import { Link } from 'react-router';
-import { Col, Form, FormGroup, ButtonGroup, Button, ControlLabel, HelpBlock, Panel, Checkbox } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Col, Form, ButtonGroup, Button, Card } from 'react-bootstrap';
+import { useDispatch } from 'react-redux'; // Import useDispatch
+import { useParams, useNavigate } from 'react-router-dom'; // Import useParams and useNavigate
+import { startDeck as setCurrentDeck } from '../slices/currentDeckSlice'; // Import startDeck for currentDeck
+import { setDeckConfig } from '../slices/configSlice'; // Import setDeckConfig
 
-class DeckConfig extends React.Component {
+function DeckConfig() { // No props needed anymore
+    const [showSide, setShowSideState] = useState('front');
+    const [randomize, setRandomize] = useState(true);
+    const [showDetails, setShowDetails] = useState('always'); // Assuming 'always' as default
 
-    constructor(props) {
-        super(props);
-        this.state = { showSide: 'front', randomize: true };
+    const dispatch = useDispatch();
+    const navigate = useNavigate(); // Initialize navigate hook
+    const { deckId } = useParams(); // Get deckId from URL parameters
 
-        // Manually bind this method to the component instance so "this" is what we expect
-        this.startDeck = this.startDeck.bind(this);
-        this.setShowSide = this.setShowSide.bind(this);
-        this.toggleRandomize = this.toggleRandomize.bind(this);
-    }
-
-    startDeck() {
-
-        // TODO: Validation of inputs
+    const handleStartDeck = () => { // Renamed from startDeck to handleStartDeck
         const config = {
-            showSide: this.state.showSide,
-            randomize: this.state.randomize
+            showSide,
+            randomize,
+            showDetails // Include showDetails in config
         };
-        this.props.onDeckConfigure(this.props.deckId, config);
-    }
+        dispatch(setCurrentDeck(deckId)); // Dispatch action to set currentDeck
+        dispatch(setDeckConfig(config)); // Dispatch action to set config
+        navigate(`/decks/${deckId}`); // Navigate to the decks page
+    };
 
-    setShowSide(side) {
-        this.setState({ showSide: side });
-    }
+    const handleSetShowSide = (side) => {
+        setShowSideState(side);
+    };
 
-    toggleRandomize() {
-        this.setState({ randomize: !this.state.randomize });
-    }
+    const handleToggleRandomize = () => {
+        setRandomize(!randomize);
+    };
 
-    render() {
+    const handleSetShowDetails = (detailOption) => {
+        setShowDetails(detailOption);
+    };
 
-        return (
-            <div className="container">
+    return (
+        <div className="container">
+            <Card className="app-form">
+                <Card.Header className="config-header" fill>
+                    <h2>Get Ready!</h2>
+                    <p>
+                        Let us know how you'd like to go through this deck of flashcards.
+                    </p>
+                </Card.Header>
 
-                <Panel className="app-form">
-
-                    <div className="config-header" fill>
-                        <h2>Get Ready!</h2>
-                        <p>
-                            Let us know how you'd like to go through this deck of flashcards.
-                        </p>
-                    </div>
-
+                <Card.Body>
                     <Form horizontal>
 
-                        <FormGroup controlId="formBasicText">
-                            {/*<ControlLabel className="config-label">Show me:</ControlLabel>*/}
-                            <Col componentClass={ControlLabel} className="config-label" sm={3}>Show me:</Col>
+                        <Form.Group as={Col} controlId="formShowSide" className="mb-3">
+                            <Form.Label column sm={3} className="config-label">Show me:</Form.Label>
                             <Col sm={8}>
                                 <ButtonGroup>
-                                    <Button onClick={() => { this.setShowSide('front'); }}
-                                        bsStyle={this.state.showSide === 'front' ? 'primary' : 'default'}>Front side</Button>
-                                    <Button onClick={() => { this.setShowSide('back'); }}
-                                        bsStyle={this.state.showSide !== 'front' ? 'primary' : 'default'}>Back side</Button>
+                                    <Button onClick={() => handleSetShowSide('front')}
+                                            variant={showSide === 'front' ? 'primary' : 'secondary'}>Front side</Button>
+                                    <Button onClick={() => handleSetShowSide('back')}
+                                            variant={showSide !== 'front' ? 'primary' : 'secondary'}>Back side</Button>
                                 </ButtonGroup>
-                                <HelpBlock className="inline-help-block">("Front side" is typical)</HelpBlock>
+                                <Form.Text className="inline-help-block text-muted">("Front side" is typical)</Form.Text>
                             </Col>
-                        </FormGroup>
+                        </Form.Group>
 
-                        <FormGroup controlId="formBasicText">
-                            <Col componentClass={ControlLabel} className="config-label" sm={3}>Show details:</Col>
+                        <Form.Group as={Col} controlId="formShowDetails" className="mb-3">
+                            <Form.Label column sm={3} className="config-label">Show details:</Form.Label>
                             <Col sm={8}>
                                 <ButtonGroup>
-                                    <Button onClick={() => { ; }}
-                                            bsStyle={this.state.showDetails === 'always' ? 'primary' : 'default'}>Always</Button>
-                                    <Button onClick={() => { ; }}
-                                            bsStyle={this.state.showDetails === 'never' ? 'primary' : 'default'}>Never</Button>
-                                    <Button onClick={() => { ; }}
-                                            bsStyle={this.state.showDetails === 'beforeFlipping' ? 'primary' : 'default'}>Before flipping</Button>
+                                    <Button onClick={() => handleSetShowDetails('always')}
+                                            variant={showDetails === 'always' ? 'primary' : 'secondary'}>Always</Button>
+                                    <Button onClick={() => handleSetShowDetails('never')}
+                                            variant={showDetails === 'never' ? 'primary' : 'secondary'}>Never</Button>
+                                    <Button onClick={() => handleSetShowDetails('beforeFlipping')}
+                                            variant={showDetails === 'beforeFlipping' ? 'primary' : 'secondary'}>Before flipping</Button>
                                 </ButtonGroup>
                             </Col>
-                        </FormGroup>
+                        </Form.Group>
 
-                        <FormGroup controlId="formBasicText">
-                            <Col componentClass={ControlLabel} className="config-label" sm={3}>Miscellaney:</Col>
+                        <Form.Group as={Col} controlId="formRandomize" className="mb-3">
+                            <Form.Label column sm={3} className="config-label">Miscellaney:</Form.Label>
                             <Col sm={8}>
-                                <Checkbox checked={this.state.randomize} onChange={this.toggleRandomize}>Randomize</Checkbox>
+                                <Form.Check
+                                    type="checkbox"
+                                    label="Randomize"
+                                    checked={randomize}
+                                    onChange={handleToggleRandomize}
+                                />
                             </Col>
-                        </FormGroup>
+                        </Form.Group>
 
                     </Form>
+                </Card.Body>
 
-                    <div className="config-submit-button-area">
-                        <Button bsStyle="success" onClick={this.startDeck}>Start flipping!</Button>
-                    </div>
-                </Panel>
-            </div>
-        );
-    }
+                <Card.Footer className="config-submit-button-area">
+                    <Button variant="success" onClick={handleStartDeck}>Start flipping!</Button>
+                </Card.Footer>
+            </Card>
+        </div>
+    );
 }
 
 export default DeckConfig;

@@ -1,44 +1,37 @@
 import React from 'react';
-// import { Link } from 'react-router';
-import { FormGroup, ButtonGroup, Button, ControlLabel, HelpBlock, Panel, Checkbox } from 'react-bootstrap';
+import { Button, Card } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
-class Results extends React.Component {
+function Results() { // No props needed for Redux connection here
 
-    constructor(props) {
-        super(props);
-        this.state = { };
+    const navigate = useNavigate();
 
-        // Manually bind this method to the component instance so "this" is what we expect
-        this.startNewDeck= this.startNewDeck.bind(this);
-    }
+    const startNewDeck = () => {
+        // The original goHome action (which onStartNewDeck dispatched) primarily handled navigation.
+        // Since navigation is now handled directly via useNavigate, no Redux dispatch is needed here.
+        navigate('/'); // Navigate to home
+    };
 
-    startNewDeck() {
-        this.props.onStartNewDeck();
-    }
+    return (
+        <div className="container">
+            <Card className="app-form">
+                <Card.Header className="config-header" fill>
+                    <h2>All Done!</h2>
+                    <p>
+                        Here's you you did:
+                    </p>
+                </Card.Header>
 
-    render() {
-
-        return (
-            <div className="container">
-
-                <Panel className="app-form">
-
-                    <div className="config-header" fill>
-                        <h2>All Done!</h2>
-                        <p>
-                            Here's you you did:
-                        </p>
-                    </div>
-
+                <Card.Body> {/* Panel body content goes into Card.Body */}
                     Amazing!!!
+                </Card.Body>
 
-                    <div className="config-submit-button-area">
-                        <Button bsStyle="success" onClick={this.startNewDeck}>Start another deck</Button>
-                    </div>
-                </Panel>
-            </div>
-        );
-    }
+                <Card.Footer className="config-submit-button-area"> {/* Footer for actions */}
+                    <Button variant="success" onClick={startNewDeck}>Start another deck</Button>
+                </Card.Footer>
+            </Card>
+        </div>
+    );
 }
 
 export default Results;

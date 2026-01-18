@@ -1,45 +1,47 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import rootReducer from './reducers';
+import { configureStore } from '@reduxjs/toolkit';
 import App from './components/App';
 import App404 from './components/App404';
-import VisibleDeck from './containers/VisibleDeck';
-import VisibleDeckConfig from './containers/VisibleDeckConfig';
-import VisibleDeckList from './containers/VisibleDeckList';
-import VisibleResults from './containers/VisibleResults';
-import { Router, Route, IndexRoute, browserHistory } from 'react-router';
-import thunkMiddleware from 'redux-thunk'; // Allow action creators to return functions for async operations
-import createLogger from 'redux-logger'; // Log actions
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import DeckList from './components/DeckList';
+import DeckConfig from './components/DeckConfig';
+import Deck from './components/Deck';
+import Results from './components/Results';
 
-// First bootstrap, then the bootstrap theme to apply
-// import 'bootstrap/dist/css/bootstrap.css'
-import 'bootswatch/flatly/bootstrap.css';
+import currentDeckReducer from './slices/currentDeckSlice';
+import configReducer from './slices/configSlice';
+import decksReducer from './slices/decksSlice';
+
+import 'bootswatch/dist/flatly/bootstrap.css';
 
 import 'font-awesome/css/font-awesome.css';
 import './css/app.css';
-import 'react-progress-bar-plus/lib/progress-bar.css';
 
-const loggerMiddleware = createLogger();
-const store = createStore(rootReducer,
-    applyMiddleware(
-        thunkMiddleware, // Let us dispatch functions
-        loggerMiddleware // Logs actions
-    )
-);
 
-ReactDOM.render(
+const store = configureStore({
+    reducer: {
+        currentDeck: currentDeckReducer,
+        config: configReducer,
+        decks: decksReducer,
+    },
+    // configureStore automatically includes Redux Thunk and sets up the Redux DevTools Extension.
+    // middleware can be customized if needed, but for now, the default is fine.
+});
+
+createRoot(document.getElementById('app-content')).render(
     <Provider store={store}>
-        <Router history={browserHistory}>
-            <Route path="/" component={App}>
-                <IndexRoute component={VisibleDeckList} />
-                <Route path="/config/:deckId" component={VisibleDeckConfig} />
-                <Route path="/decks/:deckId"  component={VisibleDeck} />
-                <Route path="/results/:deckId"  component={VisibleResults} />
-                <Route path='*' component={App404} />
-            </Route>
-        </Router>
-    </Provider>,
-    document.getElementById('app-content')
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<App />}>
+                    <Route index element={<DeckList />} />
+                    <Route path="/config/:deckId" element={<DeckConfig />} />
+                    <Route path="/decks/:deckId" element={<Deck />} />
+                    <Route path="/results/:deckId" element={<Results />} />
+                    <Route path='*' element={<App404 />} />
+                </Route>
+            </Routes>
+        </BrowserRouter>
+    </Provider>
 );
