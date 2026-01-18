@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'; // Added useState, useEffect, useRef
+import React, { useState, useEffect } from 'react'; // Added useState, useEffect, useRef
 import { useSelector, useDispatch } from 'react-redux'; // For Redux state and dispatch
 import { useParams, useNavigate, Link } from 'react-router-dom'; // For route parameters, navigation, Link
 import { fetchDeckMetadata } from '../slices/decksSlice'; // For fetching deck info
@@ -33,7 +33,7 @@ function Deck() {
     const [correctCount, setCorrectCount] = useState(0);
     const [startTime, setStartTime] = useState(null);
     const [animating, setAnimating] = useState(false);
-    const topCardRef = useRef(null); // Ref for direct card manipulation
+    const [animation, setAnimation] = useState(null);
 
     // Fetch deck info when component mounts or deckId changes
     useEffect(() => {
@@ -81,16 +81,36 @@ function Deck() {
     }, [currentDeckIdParam, config.randomize]); // Dependencies: currentDeckIdParam, config.randomize
 
 
-    // Global keydown handler for left/right arrows
+    // Global keydown handler for all card actions
     useEffect(() => {
         const handleKeyDown = (e) => {
-            if (animating) { // Check local animating state
+            // When a card is animating away, don't allow updating the next card before it's done'
+            if (animating) {
                 return;
             }
-            if (e.key === 'ArrowLeft') {
-                userKnewCard(false);
-            } else if (e.key === 'ArrowRight') {
-                userKnewCard(true);
+            switch (e.key) {
+                case 'ArrowLeft':
+                    userKnewCard(false);
+                    break;
+                case 'ArrowRight':
+                    userKnewCard(true);
+                    break;
+                case 'ArrowDown':
+                    if (!cardFlipped) {
+                        setCardFlipped(true);
+                    }
+                    e.stopPropagation();
+                    e.preventDefault();
+                    break;
+                case 'ArrowUp':
+                    if (cardFlipped) {
+                        setCardFlipped(false);
+                    }
+                    e.stopPropagation();
+                    e.preventDefault();
+                    break;
+                default:
+                    break;
             }
         };
 
@@ -98,7 +118,7 @@ function Deck() {
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, [animating]); // Only re-run if animating state changes
+    }, [animating, cardFlipped]); // Re-run if animating or flipped state changes
 
 
     const advance = (knewCard) => {
@@ -111,6 +131,12 @@ function Deck() {
         } else {
             navigate(`/results/${currentDeckIdParam}`);
         }
+    };
+
+    const handleAnimationEnd = () => {
+        const knew = animation === 'right';
+        setAnimation(null); // Reset animation state
+        advance(knew);
     };
 
     const noSuchDeck = () => {
@@ -141,13 +167,7 @@ function Deck() {
     const userKnewCard = (knew) => {
         if (!animating) {
             setAnimating(true);
-            if (topCardRef.current && typeof topCardRef.current.setUserKnew === 'function') {
-                topCardRef.current.setUserKnew(knew);
-            } else {
-                // Fallback or error handling if ref or method not available
-                console.warn("topCardRef or setUserKnew is not available immediately. Proceeding without animation.");
-                advance(knew);
-            }
+            setAnimation(knew ? 'right' : 'left');
         }
     };
 
@@ -186,16 +206,17 @@ function Deck() {
                     <Timer startTime={startTime}></Timer>
                     {nextCard && (
                         <div style={nextCardStyle}>
-                            <Card key={nextCard.front.text} card={nextCard} flipped={false} />
+                            <Card key={nextCard.front.text} card={nextCard} flipped={false} isTopCard={false} />
                         </div>
                     )}
                     <Card
                         key={card.front.text}
                         card={card}
                         flipped={cardFlipped}
-                        ref={topCardRef} // Assign ref here
-                        advance={advance}
-                        setFlipped={setCardFlipped}
+                        isTopCard={true}
+                        animation={animation}
+                        onAnimationEnd={handleAnimationEnd}
+                        userKnewCard={userKnewCard}
                         toggleVisibleSide={toggleCardVisibleSide}
                     />
 

@@ -1,118 +1,45 @@
-import React, { useState, useEffect, useRef, useImperativeHandle } from 'react';
+import React, { useState } from 'react';
 import { marked } from 'marked';
 
 /**
  * A rendered card (either the current card, or the one beneath it).
+ * This is a purely presentational component, controlled by its parent (Deck).
  */
-// Card needs to be wrapped with forwardRef to receive the ref from Deck.jsx
-const Card = React.forwardRef(({ card, flipped, advance, toggleVisibleSide, setFlipped }, ref) => {
+const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCard, toggleVisibleSide }) => {
     const [visibility, setVisibility] = useState('visible');
     const [dragStartX, setDragStartX] = useState(-1);
-    const [animating, setAnimating] = useState(false);
-    const cardRef = useRef(null); // Internal ref to the div.card element
 
-    // Expose setUserKnew method to parent (Deck.jsx)
-    useImperativeHandle(ref, () => ({
-        setUserKnew: (knew) => {
-            const animClassName = knew ? 'sliding-right' : 'sliding-left';
-            const currentCardElement = cardRef.current; // Get the actual DOM element
-
-            if (currentCardElement) {
-                currentCardElement.classList.add(animClassName);
-                setAnimating(true);
-
-                // Native event listener for animationend with { once: true }
-                const handleAnimationEnd = () => {
-                    console.log('Animation ended');
-                    currentCardElement.classList.remove(animClassName);
-                    setAnimating(false);
-                    if (advance) {
-                        advance(knew);
-                    }
-                };
-                currentCardElement.addEventListener('animationend', handleAnimationEnd, { once: true });
-            } else {
-                // Fallback if cardRef.current is null (e.g., component unmounted)
-                console.warn("Card element not available for animation. Proceeding without animation.");
-                if (advance) {
-                    advance(knew);
-                }
-            }
-        },
-    }));
-
-    useEffect(() => {
-        if (!advance) { // Only attach keydown listener if this is the top card (indicated by advance prop)
-            return;
-        }
-
-        const handleKeyDown = (e) => {
-            if (animating) {
-                console.log('animating, not honoring key press');
-                return;
-            }
-            // console.log('not animating, honoring key press'); // Temporarily disabled console.log due to verbosity
-            switch (e.key) {
-                case 'ArrowDown':
-                    if (!flipped) {
-                        setFlipped(true);
-                    }
-                    e.stopPropagation();
-                    e.preventDefault();
-                    break;
-                case 'ArrowUp':
-                    if (flipped) {
-                        setFlipped(false);
-                    }
-                    e.stopPropagation();
-                    e.preventDefault();
-                    break;
-                default:
-                    break;
-            }
-        };
-
-        document.addEventListener('keydown', handleKeyDown);
-
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [animating, flipped, advance, setFlipped]);
-
-
-    // onClick now directly calls prop
     const handleClick = (e) => {
         if (toggleVisibleSide) {
             toggleVisibleSide(e);
         }
     };
 
-    // onDrag logic
     const handleDrag = (e) => {
+        if (!isTopCard) return;
         setVisibility('hidden');
         setDragStartX(e.screenX);
     };
 
-    // onDrop logic
     const handleDragEnd = (e) => {
+        if (!isTopCard) return;
         const delta = e.screenX - dragStartX;
 
         if (delta > 100) {
             // Swipe to the right => knew the word
-            if (advance) {
-                advance(true);
-            }
+            userKnewCard?.(true);
         } else if (delta < -100) {
             // Swipe to the left => didn't know the card
-            if (advance) {
-                advance(false);
-            }
+            userKnewCard?.(false);
         }
 
         setVisibility('visible');
         setDragStartX(-1);
     };
 
+    const handleAnimationEnd = () => {
+        onAnimationEnd?.();
+    }
 
     const side = flipped ? card.back : card.front;
 
@@ -137,14 +64,23 @@ const Card = React.forwardRef(({ card, flipped, advance, toggleVisibleSide, setF
     };
 
     let className = 'card';
-    if (advance) { // advance prop indicates this is the top card
+    if (isTopCard) {
         className += ' topCard';
+    }
+    if (animation) {
+        className += animation === 'right' ? ' sliding-right' : ' sliding-left';
     }
 
     return (
         <div className="card-wrapper">
-            <div ref={cardRef} className={className} style={cardStyle} draggable="true"
-                 onClick={handleClick} onDrag={handleDrag} onDragEnd={handleDragEnd}>
+            <div className={className}
+                 style={cardStyle}
+                 draggable={isTopCard}
+                 onClick={handleClick}
+                 onDrag={handleDrag}
+                 onDragEnd={handleDragEnd}
+                 onAnimationEnd={handleAnimationEnd}
+            >
 
                 <div className="card-top"></div>
 
@@ -166,6 +102,6 @@ const Card = React.forwardRef(({ card, flipped, advance, toggleVisibleSide, setF
             </div>
         </div>
     );
-});
+};
 
 export default Card;
