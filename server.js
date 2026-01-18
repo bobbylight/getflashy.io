@@ -10,7 +10,7 @@ const fs = require('fs');
 const path = require('path');
 
 const decks = {};
-const deckDir = path.join(__dirname, 'decks');
+const deckDir = path.join(__dirname, 'public/decks');
 const files = fs.readdirSync(deckDir);
 files.forEach((file, index) => {
     const id = file.substring(0, file.lastIndexOf('.'));
