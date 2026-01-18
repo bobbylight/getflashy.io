@@ -73,7 +73,7 @@ function Deck() {
 
             } catch (error) {
                 console.error("Error fetching specific deck:", error);
-                setDeck(null); // Indicate deck not found or error
+                setDeck(null);
             }
         };
 
@@ -81,9 +81,12 @@ function Deck() {
     }, [currentDeckIdParam, config.randomize]); // Dependencies: currentDeckIdParam, config.randomize
 
 
-    // Cleanup for keydown handler
+    // Global keydown handler for left/right arrows
     useEffect(() => {
         const handleKeyDown = (e) => {
+            if (animating) { // Check local animating state
+                return;
+            }
             if (e.key === 'ArrowLeft') {
                 userKnewCard(false);
             } else if (e.key === 'ArrowRight') {
@@ -95,7 +98,7 @@ function Deck() {
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
+    }, [animating]); // Only re-run if animating state changes
 
 
     const advance = (knewCard) => {
@@ -106,11 +109,7 @@ function Deck() {
             setCardFlipped(false);
             setAnimating(false);
         } else {
-            // Deck completed
-            navigate(`/results/${currentDeckIdParam}`); // Navigate to results
-            // original onDeckCompleted called this.props.onDeckCompleted(this.props.deckId)
-            // The VisibleDeck container used to call showResults action which navigated.
-            // Now navigation is direct, and the results component will receive correct props.
+            navigate(`/results/${currentDeckIdParam}`);
         }
     };
 
@@ -153,14 +152,12 @@ function Deck() {
     };
 
     if (deck === null) {
-        return loadingScreen(); // Deck not found or still loading
+        return loadingScreen();
     }
     if (!deck.cards || deck.cards.length === 0) {
-        return noSuchDeck(); // No cards in deck or deck info not loaded correctly
+        return noSuchDeck();
     }
     if (currentDeckIdParam !== deck.id) {
-        // This case handles where URL deckId doesn't match loaded deck (e.g., failed fetch, or routing issue)
-        // or if deck was not fetched due to currentDeckIdParam being invalid.
         return noSuchDeck();
     }
 
@@ -198,6 +195,7 @@ function Deck() {
                         flipped={cardFlipped}
                         ref={topCardRef} // Assign ref here
                         advance={advance}
+                        setFlipped={setCardFlipped}
                         toggleVisibleSide={toggleCardVisibleSide}
                     />
 
