@@ -4,7 +4,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 export const fetchDeckMetadata = createAsyncThunk(
   'decks/fetchDeckMetadata',
   async () => {
-    const response = await fetch('/api/decks'); // Replace jQuery $.ajax with native fetch
+    const response = await fetch('/api/decks');
     if (!response.ok) {
       throw new Error('Failed to fetch deck metadata');
     }
