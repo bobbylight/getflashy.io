@@ -1,7 +1,6 @@
 'use strict';
 
 const express = require('express');
-//const livereload = require('express-livereload');
 const app = express();
 
 const compression = require('compression');
@@ -9,7 +8,6 @@ app.use(compression());
 
 const fs = require('fs');
 const path = require('path');
-const async = require('async');
 
 const decks = {};
 const deckDir = path.join(__dirname, 'decks');
@@ -65,9 +63,8 @@ app.get('/api/decks/:deckId', (req, res) => {
 app.use(express.static(path.join(__dirname, 'build')));
 
 // Single-page app; always route to index.html for non-static content URLs
-app.get('/*', (req, res) => {
+app.get('*splat', (req, res) => {
     res.sendFile(path.join(__dirname, 'build/index.html'));
 });
 
 app.listen(process.env.PORT || 8080);
-//livereload(app);
