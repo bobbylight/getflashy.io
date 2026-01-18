@@ -1,19 +1,15 @@
-import React, { useState, useEffect, useRef, useImperativeHandle } from 'react'; // Added hooks
+import React, { useState, useEffect, useRef, useImperativeHandle } from 'react';
 import { marked } from 'marked';
 
 /**
  * A rendered card (either the current card, or the one beneath it).
  */
 // Card needs to be wrapped with forwardRef to receive the ref from Deck.jsx
-const Card = React.forwardRef(({ card, flipped, advance, toggleVisibleSide }, ref) => {
-    const [cardFlippedState, setCardFlippedState] = useState(false); // Using a different name to avoid confusion with prop 'flipped'
+const Card = React.forwardRef(({ card, flipped, advance, toggleVisibleSide, setFlipped }, ref) => {
     const [visibility, setVisibility] = useState('visible');
     const [dragStartX, setDragStartX] = useState(-1);
     const [animating, setAnimating] = useState(false);
     const cardRef = useRef(null); // Internal ref to the div.card element
-
-    // Use passed 'flipped' prop, but also allow local state to manage 'cardFlippedState'
-    const isFlipped = cardFlippedState || flipped; // Combine local and prop flipped state
 
     // Expose setUserKnew method to parent (Deck.jsx)
     useImperativeHandle(ref, () => ({
@@ -58,15 +54,15 @@ const Card = React.forwardRef(({ card, flipped, advance, toggleVisibleSide }, re
             // console.log('not animating, honoring key press'); // Temporarily disabled console.log due to verbosity
             switch (e.key) {
                 case 'ArrowDown':
-                    if (!isFlipped) {
-                        setCardFlippedState(true);
+                    if (!flipped) {
+                        setFlipped(true);
                     }
                     e.stopPropagation();
                     e.preventDefault();
                     break;
                 case 'ArrowUp':
-                    if (isFlipped) {
-                        setCardFlippedState(false);
+                    if (flipped) {
+                        setFlipped(false);
                     }
                     e.stopPropagation();
                     e.preventDefault();
@@ -81,7 +77,7 @@ const Card = React.forwardRef(({ card, flipped, advance, toggleVisibleSide }, re
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, [animating, isFlipped, advance]); // Dependencies for useEffect
+    }, [animating, flipped, advance, setFlipped]);
 
 
     // onClick now directly calls prop
@@ -118,7 +114,7 @@ const Card = React.forwardRef(({ card, flipped, advance, toggleVisibleSide }, re
     };
 
 
-    const side = isFlipped ? card.back : card.front;
+    const side = flipped ? card.back : card.front;
 
     const cardStyle = {
         visibility: visibility
@@ -137,7 +133,7 @@ const Card = React.forwardRef(({ card, flipped, advance, toggleVisibleSide }, re
     };
 
     const frontHintStyle = {
-        display: isFlipped ? 'block' : 'none'
+        display: flipped ? 'block' : 'none'
     };
 
     let className = 'card';
