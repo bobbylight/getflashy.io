@@ -6,6 +6,15 @@ import { Link } from 'react-router';
 import ProgressBar from 'react-progress-bar-plus';
 import Timer from './Timer';
 
+// Utility function for Fisher-Yates shuffle
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 /**
  * The deck of flash cards being worked through and its state.
  */
@@ -47,7 +56,7 @@ class Deck extends React.Component {
     configureDeck(deck) {
 
         if (this.props.config.randomize) {
-            deck.cards = _.shuffle(deck.cards);
+            shuffleArray(deck.cards);
         }
 
         // TODO: Front or back
