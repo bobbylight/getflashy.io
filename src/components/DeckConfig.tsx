@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import { Col, Form, ButtonGroup, Button, Card as BootstrapCard } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
-import { startDeck as setCurrentDeck } from '../slices/currentDeckSlice';
-import { setDeckConfig } from '../slices/configSlice';
-import { AppDispatch } from '../main';
-import { ConfigState } from '../slices/configSlice';
 
 interface DeckConfigParams {
   deckId?: string;
@@ -17,7 +12,6 @@ function DeckConfig() {
     const [randomize, setRandomize] = useState<boolean>(true);
     const [showDetails, setShowDetails] = useState<'always' | 'never' | 'beforeFlipping'>('always');
 
-    const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
     const { deckId } = useParams<DeckConfigParams>();
 
@@ -28,14 +22,18 @@ function DeckConfig() {
             return;
         }
 
-        const config: ConfigState = {
-            randomize,
-            showSide,
-            showDetails,
-        };
-        dispatch(setCurrentDeck(deckId));
-        dispatch(setDeckConfig(config));
-        navigate(`/decks/${deckId}`);
+        // Only pass overrides as query parameters to keep the URL cleaner
+        const queryParams = new URLSearchParams();
+        if (!randomize) {
+            queryParams.append('randomize', 'false');
+        }
+        if (showSide !== 'front') {
+            queryParams.append('showSide', showSide);
+        }
+        if (showDetails !== 'always') {
+            queryParams.append('showDetails', showDetails);
+        }
+        navigate(`/decks/${deckId}?${queryParams.toString()}`);
     };
 
     const handleSetShowSide = (side: 'front' | 'back') => {

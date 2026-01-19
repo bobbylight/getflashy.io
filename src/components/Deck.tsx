@@ -1,22 +1,9 @@
 import React, { useState, useEffect, MouseEvent } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { fetchDeckMetadata } from '../slices/decksSlice';
-import Card, { CardData } from './Card';
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
+import Card from './Card';
 import DeckStatus from './DeckStatus';
 import Timer from './Timer';
-import { RootState, AppDispatch } from '../main';
-
-// Define interfaces used in this component
-interface FullDeckData {
-  id: string;
-  name: string;
-  icon?: {
-    name: string;
-    color: string;
-  };
-  cards: CardData[];
-}
+import { Deck as FullDeck } from '../api';
 
 // Utility function for Fisher-Yates shuffle
 function shuffleArray<T>(array: T[]): T[] {
@@ -33,16 +20,18 @@ interface DeckParams {
 }
 
 function Deck() {
-    const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
     const { deckId: currentDeckIdParam } = useParams<DeckParams>();
+    const [searchParams] = useSearchParams();
 
-    // Redux state
-    const allDecks = useSelector((state: RootState) => state.decks.data);
-    const config = useSelector((state: RootState) => state.config);
+    const config = {
+        randomize: (searchParams.get('randomize') ?? 'true') === 'true',
+        showSide: searchParams.get('showSide') ?? 'front',
+        showDetails: searchParams.get('showDetails') ?? 'always',
+    };
 
     // Local state
-    const [deck, setDeck] = useState<FullDeckData | null>(null);
+    const [deck, setDeck] = useState<FullDeck | null>(null);
     const [curCard, setCurCard] = useState<number>(0);
     const [cardFlipped, setCardFlipped] = useState<boolean>(false);
     const [correctCount, setCorrectCount] = useState<number>(0);
@@ -56,13 +45,6 @@ function Deck() {
             setAnimation(knew ? 'right' : 'left');
         }
     };
-
-    // Fetch deck info when component mounts or deckId changes
-    useEffect(() => {
-        if (currentDeckIdParam && !allDecks[currentDeckIdParam]) { // If deck metadata not in Redux state, fetch it
-            dispatch(fetchDeckMetadata()); // Dispatch the async thunk
-        }
-    }, [currentDeckIdParam, allDecks, dispatch]);
 
     // When currentDeckIdParam changes, fetch and configure the specific deck
     useEffect(() => {
@@ -78,7 +60,7 @@ function Deck() {
                 if (!response.ok) {
                     throw new Error('Failed to fetch specific deck data');
                 }
-                const data: FullDeckData = await response.json();
+                const data: FullDeck = await response.json();
                 
                 const loadedDeck = { ...data };
                 if (config.randomize) {
@@ -104,8 +86,8 @@ function Deck() {
 
     // Global keydown handler for all card actions
     useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => { // Use globalThis.KeyboardEvent
-            // When a card is animating away, don't allow updating the next card before it's done'
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // When a card is animating away, don't allow updating the next card before it's done
             if (animating) {
                 return;
             }
@@ -149,7 +131,7 @@ function Deck() {
             setCurCard(prevCard => prevCard + 1);
             setCardFlipped(false);
             setAnimating(false);
-        } else if (deck) { // Only navigate if deck exists
+        } else if (deck) {
             navigate(`/results/${currentDeckIdParam}`);
         }
     };
@@ -195,7 +177,6 @@ function Deck() {
         return noSuchDeck();
     }
 
-
     const fillHeight: React.CSSProperties = { height: '100%' };
     const percent: number = (curCard / deck.cards.length) * 100;
 
@@ -207,7 +188,6 @@ function Deck() {
 
     const card = deck.cards[curCard];
     const nextCard = curCard < deck.cards.length - 1 ? deck.cards[curCard + 1] : null;
-
 
     return (
         <div style={fillHeight}>

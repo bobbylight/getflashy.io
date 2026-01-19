@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { configureDeck } from '../slices/currentDeckSlice';
 import DeckButton from './DeckButton';
 import DeckFilter from './DeckFilter';
-import { RootState, AppDispatch } from '../main';
-import { DeckMetadata } from '../slices/decksSlice';
+import { DeckMetadata } from '../api';
+import { useDecks } from '../contexts/DecksContext';
 
 function DeckList() {
     const [deckFilter, setDeckFilter] = useState<string>('');
-    const allDecks = useSelector((state: RootState) => state.decks.data);
-    const dispatch: AppDispatch = useDispatch();
+    const decksContext = useDecks();
     const navigate = useNavigate();
 
     const onDeckFilterChange = (filter: string) => {
@@ -18,11 +15,11 @@ function DeckList() {
     };
 
     const handleDeckClick = (deck: DeckMetadata) => {
-        dispatch(configureDeck(deck.id));
         navigate(`/config/${deck.id}`);
     };
 
     // Filter decks based on deckFilter state
+    const allDecks = decksContext.decks;
     const filteredDecks: DeckMetadata[] = Object.values(allDecks).filter((deck: DeckMetadata) =>
         deck.name.toLowerCase().includes(deckFilter.toLowerCase())
     );
