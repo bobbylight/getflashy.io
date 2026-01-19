@@ -1,12 +1,12 @@
 import { Button, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
-function Results() {
+export function Results() {
 
     const navigate = useNavigate();
 
     const startNewDeck = () => {
-        navigate('/'); // Navigate to home
+        void navigate('/'); // Navigate to home
     };
 
     return (
@@ -30,5 +30,3 @@ function Results() {
         </div>
     );
 }
-
-export default Results;

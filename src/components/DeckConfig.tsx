@@ -7,10 +7,10 @@ interface DeckConfigParams {
   [key: string]: string | undefined;
 }
 
-function DeckConfig() {
-    const [showSide, setShowSideState] = useState<'front' | 'back'>('front');
-    const [randomize, setRandomize] = useState<boolean>(true);
-    const [showDetails, setShowDetails] = useState<'always' | 'never' | 'beforeFlipping'>('always');
+export function DeckConfig() {
+    const [ showSide, setShowSideState ] = useState<'front' | 'back'>('front');
+    const [ randomize, setRandomize ] = useState<boolean>(true);
+    const [ showDetails, setShowDetails ] = useState<'always' | 'never' | 'beforeFlipping'>('always');
 
     const navigate = useNavigate();
     const { deckId } = useParams<DeckConfigParams>();
@@ -18,7 +18,7 @@ function DeckConfig() {
     const handleStartDeck = () => {
         if (!deckId) {
             console.error("Deck ID is missing!");
-            navigate('/');
+            void navigate('/');
             return;
         }
 
@@ -33,7 +33,7 @@ function DeckConfig() {
         if (showDetails !== 'always') {
             queryParams.append('showDetails', showDetails);
         }
-        navigate(`/decks/${deckId}?${queryParams.toString()}`);
+        void navigate(`/decks/${deckId}?${queryParams.toString()}`);
     };
 
     const handleSetShowSide = (side: 'front' | 'back') => {
@@ -65,10 +65,14 @@ function DeckConfig() {
                             <Form.Label column sm={3} className="config-label">Show me:</Form.Label>
                             <Col sm={8}>
                                 <ButtonGroup>
-                                    <Button onClick={() => handleSetShowSide('front')}
-                                            variant={showSide === 'front' ? 'primary' : 'secondary'}>Front side</Button>
-                                    <Button onClick={() => handleSetShowSide('back')}
-                                            variant={showSide !== 'front' ? 'primary' : 'secondary'}>Back side</Button>
+                                    <Button onClick={() => {
+                                        handleSetShowSide('front');
+                                    }}
+                                    variant={showSide === 'front' ? 'primary' : 'secondary'}>Front side</Button>
+                                    <Button onClick={() => {
+                                        handleSetShowSide('back');
+                                    }}
+                                    variant={showSide !== 'front' ? 'primary' : 'secondary'}>Back side</Button>
                                 </ButtonGroup>
                                 <Form.Text className="inline-help-block text-muted">("Front side" is typical)</Form.Text>
                             </Col>
@@ -78,12 +82,18 @@ function DeckConfig() {
                             <Form.Label column sm={3} className="config-label">Show details:</Form.Label>
                             <Col sm={8}>
                                 <ButtonGroup>
-                                    <Button onClick={() => handleSetShowDetails('always')}
-                                            variant={showDetails === 'always' ? 'primary' : 'secondary'}>Always</Button>
-                                    <Button onClick={() => handleSetShowDetails('never')}
-                                            variant={showDetails === 'never' ? 'primary' : 'secondary'}>Never</Button>
-                                    <Button onClick={() => handleSetShowDetails('beforeFlipping')}
-                                            variant={showDetails === 'beforeFlipping' ? 'primary' : 'secondary'}>Before flipping</Button>
+                                    <Button onClick={() => {
+                                        handleSetShowDetails('always');
+                                    }}
+                                    variant={showDetails === 'always' ? 'primary' : 'secondary'}>Always</Button>
+                                    <Button onClick={() => {
+                                        handleSetShowDetails('never');
+                                    }}
+                                    variant={showDetails === 'never' ? 'primary' : 'secondary'}>Never</Button>
+                                    <Button onClick={() => {
+                                        handleSetShowDetails('beforeFlipping');
+                                    }}
+                                    variant={showDetails === 'beforeFlipping' ? 'primary' : 'secondary'}>Before flipping</Button>
                                 </ButtonGroup>
                             </Col>
                         </Form.Group>
@@ -110,5 +120,3 @@ function DeckConfig() {
         </div>
     );
 }
-
-export default DeckConfig;

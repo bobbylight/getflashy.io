@@ -14,7 +14,7 @@ const deckDir = path.join(__dirname, 'public/decks');
 const files = fs.readdirSync(deckDir);
 files.forEach((file, index) => {
     const id = file.substring(0, file.lastIndexOf('.'));
-    decks[id] = require(path.join(deckDir, id));
+    decks[id] = require(path.join(deckDir, id) + '.cjs');
     decks[id].id = id;
     decks[id].modified = fs.statSync(path.join(deckDir, file)).mtime;
 });

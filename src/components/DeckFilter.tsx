@@ -7,15 +7,13 @@ interface DeckFilterProps {
   onChange: (filter: string) => void;
 }
 
-function DeckFilter({ label, helpText, onChange }: DeckFilterProps) {
-    const [filter, setFilter] = useState<string>('');
+export function DeckFilter({ label, helpText, onChange }: DeckFilterProps) {
+    const [ filter, setFilter ] = useState<string>('');
 
     const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
         const newFilter = e.target.value;
         setFilter(newFilter);
-        if (onChange) {
-            onChange(newFilter);
-        }
+        onChange(newFilter);
     };
 
     return (
@@ -29,10 +27,8 @@ function DeckFilter({ label, helpText, onChange }: DeckFilterProps) {
                     value={filter}
                 />
                 <Form.Control.Feedback />
-                <Form.Text className="text-muted">{helpText || ''}</Form.Text>
+                <Form.Text className="text-muted">{helpText ?? ''}</Form.Text>
             </Form.Group>
         </div>
     );
 }
-
-export default DeckFilter;

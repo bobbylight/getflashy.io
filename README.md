@@ -3,7 +3,7 @@
 trendy new web technologies while memorizing a bunch of words.
 
 ## Hacking
-`getflashy` is written in React using ES6 classes.  It's built
+`getflashy` is written in TypeScript.  It's built
 with vite, which makes developing super-easy.  First, install
 all node modules and start an express server (port 8080 by default;
 configurable via $PORT environment variable):
@@ -18,10 +18,10 @@ dev mode so changes are immediately visible in your browser
 after a refresh:
 
 ```js
-npm run watch
+npm run dev
 ```
 
 ### How it works
-vite is building a minified version of the app in `build/`.  Our
-express server is serving that static content, as well as providing
-a simple REST API to fetch flashcard decks.
+vite serves the frontend from http://localhost:5473 and proxies API
+calls to http://localhost:8080.
+

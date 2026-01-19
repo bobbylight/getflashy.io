@@ -1,15 +1,15 @@
 import React, { useState, useEffect, MouseEvent } from 'react';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
-import Card from './Card';
-import DeckStatus from './DeckStatus';
-import Timer from './Timer';
 import { Deck as FullDeck } from '../api';
+import { Card } from './Card';
+import { DeckStatus } from './DeckStatus';
+import { Timer } from './Timer';
 
 // Utility function for Fisher-Yates shuffle
 function shuffleArray<T>(array: T[]): T[] {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j] as T, array[i] as T];
+        [ array[i], array[j] ] = [ array[j] as T, array[i] as T ];
     }
     return array;
 }
@@ -19,10 +19,10 @@ interface DeckParams {
   [key: string]: string | undefined;
 }
 
-function Deck() {
+export function Deck() {
     const navigate = useNavigate();
     const { deckId: currentDeckIdParam } = useParams<DeckParams>();
-    const [searchParams] = useSearchParams();
+    const [ searchParams ] = useSearchParams();
 
     const config = {
         randomize: (searchParams.get('randomize') ?? 'true') === 'true',
@@ -31,13 +31,13 @@ function Deck() {
     };
 
     // Local state
-    const [deck, setDeck] = useState<FullDeck | null>(null);
-    const [curCard, setCurCard] = useState<number>(0);
-    const [cardFlipped, setCardFlipped] = useState<boolean>(false);
-    const [correctCount, setCorrectCount] = useState<number>(0);
-    const [startTime, setStartTime] = useState<Date>(new Date());
-    const [animating, setAnimating] = useState<boolean>(false);
-    const [animation, setAnimation] = useState<'right' | 'left' | undefined>();
+    const [ deck, setDeck ] = useState<FullDeck | null>(null);
+    const [ curCard, setCurCard ] = useState<number>(0);
+    const [ cardFlipped, setCardFlipped ] = useState<boolean>(false);
+    const [ correctCount, setCorrectCount ] = useState<number>(0);
+    const [ startTime, setStartTime ] = useState<Date>(new Date());
+    const [ animating, setAnimating ] = useState<boolean>(false);
+    const [ animation, setAnimation ] = useState<'right' | 'left' | undefined>();
 
     const userKnewCard = (knew: boolean) => {
         if (!animating) {
@@ -48,7 +48,7 @@ function Deck() {
 
     // When currentDeckIdParam changes, fetch and configure the specific deck
     useEffect(() => {
-        const fetchSpecificDeck = async () => {
+        const fetchSpecificDeck = async() => {
             if (!currentDeckIdParam) {
                 setDeck(null);
                 return;
@@ -60,11 +60,11 @@ function Deck() {
                 if (!response.ok) {
                     throw new Error('Failed to fetch specific deck data');
                 }
-                const data: FullDeck = await response.json();
-                
+                const data = await response.json() as FullDeck;
+
                 const loadedDeck = { ...data };
                 if (config.randomize) {
-                    loadedDeck.cards = shuffleArray([...loadedDeck.cards]);
+                    loadedDeck.cards = shuffleArray([ ...loadedDeck.cards ]);
                 }
 
                 setDeck(loadedDeck);
@@ -74,14 +74,15 @@ function Deck() {
                 setStartTime(new Date());
                 setAnimating(false);
 
-            } catch (error) {
+            }
+            catch (error) {
                 console.error("Error fetching specific deck:", error);
                 setDeck(null);
             }
         };
 
-        fetchSpecificDeck();
-    }, [currentDeckIdParam, config.randomize]);
+        void fetchSpecificDeck();
+    }, [ currentDeckIdParam, config.randomize ]);
 
 
     // Global keydown handler for all card actions
@@ -121,18 +122,19 @@ function Deck() {
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, [animating, cardFlipped, deck, userKnewCard]);
+    }, [ animating, cardFlipped, deck, userKnewCard ]);
 
 
     const advance = (knewCard: boolean) => {
-        setCorrectCount(prevCount => prevCount + (knewCard ? 1 : 0));
+        setCorrectCount((prevCount) => prevCount + (knewCard ? 1 : 0));
 
         if (deck && curCard < deck.cards.length - 1) {
-            setCurCard(prevCard => prevCard + 1);
+            setCurCard((prevCard) => prevCard + 1);
             setCardFlipped(false);
             setAnimating(false);
-        } else if (deck) {
-            navigate(`/results/${currentDeckIdParam}`);
+        }
+        else if (deck) {
+            void navigate(`/results/${currentDeckIdParam}`);
         }
     };
 
@@ -162,7 +164,7 @@ function Deck() {
     };
 
     const toggleCardVisibleSide = (e: MouseEvent<HTMLDivElement>) => {
-        setCardFlipped(prevFlipped => !prevFlipped);
+        setCardFlipped((prevFlipped) => !prevFlipped);
         e.stopPropagation();
         e.preventDefault();
     };
@@ -170,7 +172,7 @@ function Deck() {
     if (deck === null || !currentDeckIdParam) {
         return loadingScreen();
     }
-    if (!deck.cards || deck.cards.length === 0) {
+    if (deck.cards.length === 0) {
         return noSuchDeck();
     }
     if (currentDeckIdParam !== deck.id) {
@@ -182,7 +184,7 @@ function Deck() {
     const nextCardStyle: React.CSSProperties = {
         zIndex: -100,
         position: 'absolute',
-        width: '100%'
+        width: '100%',
     };
 
     const card = deck.cards[curCard];
@@ -192,17 +194,19 @@ function Deck() {
         <div style={fillHeight}>
             <div className="deck">
                 {/*<ProgressBar spinner={false} percent={percent}/>*/}
-                <div className="deck-nav left-nav" onClick={() => userKnewCard(false)}>
+                <div className="deck-nav left-nav" onClick={() => {
+                    userKnewCard(false);
+                }}>
                     <i className="fa fa-chevron-left" aria-hidden="true"></i>
                 </div>
                 <div className="deck-card-section">
                     <Timer startTime={startTime}></Timer>
-                    {nextCard && (
+                    {nextCard &&
                         <div style={nextCardStyle}>
                             <Card key={nextCard.front.text} card={nextCard} flipped={false} isTopCard={false} />
                         </div>
-                    )}
-                    {card && (
+                    }
+                    {card &&
                         <Card
                             key={card.front.text}
                             card={card}
@@ -213,18 +217,18 @@ function Deck() {
                             userKnewCard={userKnewCard}
                             toggleVisibleSide={toggleCardVisibleSide}
                         />
-                    )}
+                    }
                     <div>
                         <DeckStatus curCard={curCard + 1} cardCount={deck.cards.length}
-                                correctCount={correctCount} />
+                            correctCount={correctCount} />
                     </div>
                 </div>
-                <div className="deck-nav right-nav" onClick={() => userKnewCard(true)}>
+                <div className="deck-nav right-nav" onClick={() => {
+                    userKnewCard(true);
+                }}>
                     <i className="fa fa-chevron-right" aria-hidden="true" ></i>
                 </div>
             </div>
         </div>
     );
 }
-
-export default Deck;

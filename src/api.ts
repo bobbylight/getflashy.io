@@ -26,9 +26,7 @@ export interface DeckMetadata {
 /**
  * Information about all available decks, as retrieved from the API.
  */
-export interface Decks {
-    [id: string]: DeckMetadata;
-}
+export type Decks = Record<string, DeckMetadata>;
 
 export interface Deck {
     id: string;
