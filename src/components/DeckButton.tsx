@@ -1,5 +1,5 @@
 import React from 'react';
-import { DeckMetadata } from '../slices/decksSlice';
+import { DeckMetadata } from '../api';
 
 interface DeckButtonProps {
   deck: DeckMetadata; // Now DeckMetadata has size and modified

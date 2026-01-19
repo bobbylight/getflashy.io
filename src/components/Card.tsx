@@ -1,16 +1,6 @@
 import React, { useState, MouseEvent, DragEvent, CSSProperties } from 'react';
 import { marked } from 'marked';
-
-interface CardSideContent {
-  text: string;
-  context1?: string;
-  context2?: string;
-}
-
-export interface CardData {
-  front: CardSideContent;
-  back: CardSideContent;
-}
+import { CardData } from '../api';
 
 interface CardProps {
   card: CardData;
