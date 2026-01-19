@@ -1,4 +1,3 @@
-import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './components/App';
 import App404 from './components/App404';

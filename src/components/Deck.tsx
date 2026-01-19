@@ -9,7 +9,7 @@ import { Deck as FullDeck } from '../api';
 function shuffleArray<T>(array: T[]): T[] {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [array[i], array[j]] = [array[j] as T, array[i] as T];
     }
     return array;
 }
@@ -178,7 +178,6 @@ function Deck() {
     }
 
     const fillHeight: React.CSSProperties = { height: '100%' };
-    const percent: number = (curCard / deck.cards.length) * 100;
 
     const nextCardStyle: React.CSSProperties = {
         zIndex: -100,
@@ -203,17 +202,18 @@ function Deck() {
                             <Card key={nextCard.front.text} card={nextCard} flipped={false} isTopCard={false} />
                         </div>
                     )}
-                    <Card
-                        key={card.front.text}
-                        card={card}
-                        flipped={cardFlipped}
-                        isTopCard={true}
-                        animation={animation}
-                        onAnimationEnd={handleAnimationEnd}
-                        userKnewCard={userKnewCard}
-                        toggleVisibleSide={toggleCardVisibleSide}
-                    />
-
+                    {card && (
+                        <Card
+                            key={card.front.text}
+                            card={card}
+                            flipped={cardFlipped}
+                            isTopCard={true}
+                            animation={animation}
+                            onAnimationEnd={handleAnimationEnd}
+                            userKnewCard={userKnewCard}
+                            toggleVisibleSide={toggleCardVisibleSide}
+                        />
+                    )}
                     <div>
                         <DeckStatus curCard={curCard + 1} cardCount={deck.cards.length}
                                 correctCount={correctCount} />
