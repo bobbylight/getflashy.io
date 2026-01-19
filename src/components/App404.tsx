@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-function App404() {
+export function App404() {
     return (
         <div>
             <div className="container">
@@ -12,5 +12,3 @@ function App404() {
         </div>
     );
 }
-
-export default App404;

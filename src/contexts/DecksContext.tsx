@@ -12,31 +12,36 @@ const DecksContext = createContext<DecksContextType | undefined>(undefined);
 /**
  * Loads available decks from the API.
  */
-export const DecksProvider = ({children}: { children: ReactNode }) => {
-    const [decks, setDecks] = useState<Decks>({});
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+export const DecksProvider = ({ children}: { children: ReactNode }) => {
+    const [ decks, setDecks ] = useState<Decks>({});
+    const [ isLoading, setIsLoading ] = useState(true);
+    const [ error, setError ] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchDecks = async () => {
+        const fetchDecks = async() => {
             try {
                 const repsonse = await fetch('/api/decks');
                 if (!repsonse.ok) {
                     throw new Error('Failed to fetch decks');
                 }
-                const data: Decks = await repsonse.json();
+                const data = await repsonse.json() as Decks;
                 setDecks(data);
-            } catch (e: any) {
-                setError(e.message);
-            } finally {
+            }
+            catch (e: unknown) {
+                if (e instanceof Error) {
+                    setError(e.message);
+                }
+                throw e;
+            }
+            finally {
                 setIsLoading(false);
             }
         };
 
-        fetchDecks();
+        void fetchDecks();
     }, []);
 
-    const value = {decks, isLoading, error};
+    const value = { decks, isLoading, error };
 
     return <DecksContext.Provider value={value}>{children}</DecksContext.Provider>;
 };

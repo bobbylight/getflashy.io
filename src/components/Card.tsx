@@ -16,9 +16,9 @@ interface CardProps {
  * A rendered card (either the current card, or the one beneath it).
  * This is a purely presentational component, controlled by its parent (Deck).
  */
-const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCard, toggleVisibleSide }: CardProps) => {
-    const [visibility, setVisibility] = useState<CSSProperties['visibility']>('visible');
-    const [dragStartX, setDragStartX] = useState<number>(-1);
+export const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCard, toggleVisibleSide }: CardProps) => {
+    const [ visibility, setVisibility ] = useState<CSSProperties['visibility']>('visible');
+    const [ dragStartX, setDragStartX ] = useState<number>(-1);
 
     const handleClick = (e: MouseEvent<HTMLDivElement>) => {
         if (toggleVisibleSide) {
@@ -39,7 +39,8 @@ const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCar
         if (delta > 100) {
             // Swipe to the right => knew the word
             userKnewCard?.(true);
-        } else if (delta < -100) {
+        }
+        else if (delta < -100) {
             // Swipe to the left => didn't know the card
             userKnewCard?.(false);
         }
@@ -50,26 +51,26 @@ const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCar
 
     const handleAnimationEnd = () => {
         onAnimationEnd?.();
-    }
+    };
 
     const side = flipped ? card.back : card.front;
 
     const cardStyle: CSSProperties = {
-        visibility: visibility
+        visibility: visibility,
     };
 
     const markedContext1 = side.context1 ? marked(side.context1) : undefined;
     const context1Style: CSSProperties = {
-        display: markedContext1 ? 'block' : 'none'
+        display: markedContext1 ? 'block' : 'none',
     };
 
     const markedContext2 = side.context2 ? marked(side.context2) : undefined;
     const context2Style: CSSProperties = {
-        display: markedContext2 ? 'block' : 'none'
+        display: markedContext2 ? 'block' : 'none',
     };
 
     const frontHintStyle: CSSProperties = {
-        display: flipped ? 'block' : 'none'
+        display: flipped ? 'block' : 'none',
     };
 
     let className = 'card';
@@ -83,12 +84,12 @@ const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCar
     return (
         <div className="card-wrapper">
             <div className={className}
-                 style={cardStyle}
-                 draggable={isTopCard}
-                 onClick={handleClick}
-                 onDragStart={handleDrag} // Changed from onDrag to onDragStart for correct behavior
-                 onDragEnd={handleDragEnd}
-                 onAnimationEnd={handleAnimationEnd}
+                style={cardStyle}
+                draggable={isTopCard}
+                onClick={handleClick}
+                onDragStart={handleDrag} // Changed from onDrag to onDragStart for correct behavior
+                onDragEnd={handleDragEnd}
+                onAnimationEnd={handleAnimationEnd}
             >
 
                 <div className="card-top"></div>
@@ -98,9 +99,11 @@ const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCar
                         <div className="main-card-content">
                             {side.text}
                         </div>
-                        <div className="context-1" style={context1Style} dangerouslySetInnerHTML={{__html: markedContext1 || ''}}>
+                        {/* eslint-disable-next-line @typescript-eslint/naming-convention */}
+                        <div className="context-1" style={context1Style} dangerouslySetInnerHTML={{ __html: markedContext1 ?? '' }}>
                         </div>
-                        <div className="context-2" style={context2Style} dangerouslySetInnerHTML={{__html: markedContext2 || ''}}>
+                        {/* eslint-disable-next-line @typescript-eslint/naming-convention */}
+                        <div className="context-2" style={context2Style} dangerouslySetInnerHTML={{ __html: markedContext2 ?? '' }}>
                         </div>
                     </div>
                 </div>
@@ -112,5 +115,3 @@ const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCar
         </div>
     );
 };
-
-export default Card;

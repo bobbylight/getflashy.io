@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import DeckButton from './DeckButton';
-import DeckFilter from './DeckFilter';
 import { DeckMetadata } from '../api';
 import { useDecks } from '../contexts/DecksContext';
+import { DeckButton } from './DeckButton';
+import { DeckFilter } from './DeckFilter';
 
-function DeckList() {
-    const [deckFilter, setDeckFilter] = useState<string>('');
+export function DeckList() {
+    const [ deckFilter, setDeckFilter ] = useState<string>('');
     const decksContext = useDecks();
     const navigate = useNavigate();
 
@@ -15,25 +15,23 @@ function DeckList() {
     };
 
     const handleDeckClick = (deck: DeckMetadata) => {
-        navigate(`/config/${deck.id}`);
+        void navigate(`/config/${deck.id}`);
     };
 
     // Filter decks based on deckFilter state
     const allDecks = decksContext.decks;
     const filteredDecks: DeckMetadata[] = Object.values(allDecks).filter((deck: DeckMetadata) =>
-        deck.name.toLowerCase().includes(deckFilter.toLowerCase())
+        deck.name.toLowerCase().includes(deckFilter.toLowerCase()),
     );
 
     return (
         <div className="container">
             <DeckFilter label="Filter decks:" helpText="" onChange={onDeckFilterChange} />
             <div className="deck-buttons">
-                {filteredDecks.map((deck) => (
-                    <DeckButton key={deck.id} deck={deck} onClick={handleDeckClick} />
-                ))}
+                {filteredDecks.map((deck) =>
+                    <DeckButton key={deck.id} deck={deck} onClick={handleDeckClick} />,
+                )}
             </div>
         </div>
     );
 }
-
-export default DeckList;

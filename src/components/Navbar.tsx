@@ -1,7 +1,7 @@
-import {Navbar, Nav, NavDropdown, Dropdown, Container} from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown, Dropdown, Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-function AppNavbar() {
+export function AppNavbar() {
     return (
         <Navbar expand="lg" bg="primary" variant="dark">
             <Container>
@@ -26,5 +26,3 @@ function AppNavbar() {
         </Navbar>
     );
 }
-
-export default AppNavbar;

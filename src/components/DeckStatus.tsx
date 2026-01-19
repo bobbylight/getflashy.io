@@ -11,5 +11,3 @@ export const DeckStatus = ({ curCard, cardCount, correctCount }: DeckStatusProps
         </div>
     );
 };
-
-export default DeckStatus;
