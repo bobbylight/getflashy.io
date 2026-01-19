@@ -1,52 +1,47 @@
-import React from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 interface TimerProps {
-  startTime: Date | null;
+  startTime: Date;
 }
 
-interface TimerState {
-  intervalHandle: number;
-  seconds: number;
-  timespanStr: string;
-}
+const Timer = ({ startTime }: TimerProps) => {
+  const [timespanStr, setTimespanStr] = useState<string>('0:00');
+  const intervalHandleRef = useRef<number | null>(null); // Use useRef for mutable interval handle
 
-class Timer extends React.Component<TimerProps, TimerState> {
-
-    constructor(props: TimerProps) {
-        super(props);
-        this.state = { intervalHandle: 0, seconds: 0, timespanStr: '0:00' };
+  const createTimespanStr = useCallback((secs: number): string => {
+    const minutes = Math.floor(secs / 60);
+    let seconds: string | number = secs % 60;
+    if (seconds < 10) {
+      seconds = '0' + seconds;
     }
+    return minutes + ':' + seconds;
+  }, []); // Memoize as it's a pure function
 
-    componentDidMount() {
-        if (this.props.startTime) {
-            const intervalHandle = window.setInterval(() => { // Use window.setInterval for clarity and global scope
-                const seconds = Math.floor((new Date().getTime() - this.props.startTime!.getTime()) / 1000);
-                this.setState({ seconds: seconds, timespanStr: this.createTimespanStr(seconds) });
-            }, 1000);
-            this.setState({ intervalHandle: intervalHandle });
-        }
-    }
+  useEffect(() => {
+    // On rerender, clear interval in preparation for a new one
+    const cleanup = () => {
+      if (intervalHandleRef.current !== null) {
+        window.clearInterval(intervalHandleRef.current);
+        intervalHandleRef.current = null;
+      }
+    };
 
-    componentWillUnmount() {
-        window.clearInterval(this.state.intervalHandle);
-    }
+    cleanup();
 
-    createTimespanStr(secs: number): string {
-        const minutes = Math.floor(secs / 60);
-        let seconds: string | number = secs % 60;
-        if (seconds < 10) {
-            seconds = '0' + seconds;
-        }
-        return minutes + ':' + seconds;
-    }
+    intervalHandleRef.current = window.setInterval(() => {
+      const currentSeconds = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+      setTimespanStr(createTimespanStr(currentSeconds));
+    }, 1000);
 
-    render() {
-        return (
-            <div className="timer">
-                <i className="fa fa-clock-o" aria-hidden="true"></i> {this.state.timespanStr}
-            </div>
-        );
-    }
-}
+    // Cleanup on unmount
+    return cleanup;
+  }, [startTime, createTimespanStr]);
+
+  return (
+    <div className="timer">
+      <i className="fa fa-clock-o" aria-hidden="true"></i> {timespanStr}
+    </div>
+  );
+};
 
 export default Timer;
