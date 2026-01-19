@@ -1,26 +1,27 @@
-'use strict';
+import express from 'express';
+import compression from 'compression';
+import fs from 'fs';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const express = require('express');
 const app = express();
-
-const compression = require('compression');
 app.use(compression());
 
-const fs = require('fs');
-const path = require('path');
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const decks = {};
 const deckDir = path.join(__dirname, 'public/decks');
 const files = fs.readdirSync(deckDir);
-files.forEach((file, index) => {
+
+for (const file of files) {
     const id = file.substring(0, file.lastIndexOf('.'));
-    decks[id] = require(path.join(deckDir, id) + '.cjs');
+    const module = await import(path.join(deckDir, id) + '.js');
+    decks[id] = module.default; // Load deck data as-is, append "metadata" fields below
     decks[id].id = id;
     decks[id].modified = fs.statSync(path.join(deckDir, file)).mtime;
-});
+}
 
-console.log('Decks:');
-console.log(JSON.stringify(decks));
+console.log('Decks:', Object.keys(decks));
 console.log();
 
 const createDeckMetadata = (decks) => {
