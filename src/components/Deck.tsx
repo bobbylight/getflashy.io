@@ -35,7 +35,7 @@ function Deck() {
     const [curCard, setCurCard] = useState<number>(0);
     const [cardFlipped, setCardFlipped] = useState<boolean>(false);
     const [correctCount, setCorrectCount] = useState<number>(0);
-    const [startTime, setStartTime] = useState<Date | null>(null);
+    const [startTime, setStartTime] = useState<Date>(new Date());
     const [animating, setAnimating] = useState<boolean>(false);
     const [animation, setAnimation] = useState<'right' | 'left' | undefined>();
 

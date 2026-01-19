@@ -1,4 +1,4 @@
-import React, { useState, MouseEvent, DragEvent, CSSProperties } from 'react';
+import { useState, MouseEvent, DragEvent, CSSProperties } from 'react';
 import { marked } from 'marked';
 import { CardData } from '../api';
 
@@ -16,7 +16,7 @@ interface CardProps {
  * A rendered card (either the current card, or the one beneath it).
  * This is a purely presentational component, controlled by its parent (Deck).
  */
-const Card: React.FC<CardProps> = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCard, toggleVisibleSide }) => {
+const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCard, toggleVisibleSide }: CardProps) => {
     const [visibility, setVisibility] = useState<CSSProperties['visibility']>('visible');
     const [dragStartX, setDragStartX] = useState<number>(-1);
 
