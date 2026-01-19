@@ -48,7 +48,7 @@ function Deck() {
     const [correctCount, setCorrectCount] = useState<number>(0);
     const [startTime, setStartTime] = useState<Date | null>(null);
     const [animating, setAnimating] = useState<boolean>(false);
-    const [animation, setAnimation] = useState<'right' | 'left' | null>(null);
+    const [animation, setAnimation] = useState<'right' | 'left' | undefined>();
 
     const userKnewCard = (knew: boolean) => {
         if (!animating) {
@@ -156,7 +156,7 @@ function Deck() {
 
     const handleAnimationEnd = () => {
         const knew = animation === 'right';
-        setAnimation(null);
+        setAnimation(undefined);
         advance(knew);
     };
 
