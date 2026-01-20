@@ -142,14 +142,11 @@ html, body {
     .card {
 
       &.sliding-right {
-      /*transition: margin-left 5s ease-in-out;*/
-        animation-duration: .5s;
-        animation-name: slide-right;
+        animation: .5s slide-right forwards;
       }
 
       &.sliding-left {
-        animation-duration: .5s;
-        animation-name: slide-left;
+        animation: .5s slide-left forwards;
       }
 
       .card-top { /* Just a decoration at the top of a card */

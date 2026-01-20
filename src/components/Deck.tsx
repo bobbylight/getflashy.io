@@ -1,4 +1,4 @@
-import React, { useState, useEffect, MouseEvent } from 'react';
+import React, { useState, useEffect, MouseEvent, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Deck as FullDeck } from '../api';
 import { Card } from './Card';
@@ -39,12 +39,12 @@ export function Deck() {
     const [ animating, setAnimating ] = useState<boolean>(false);
     const [ animation, setAnimation ] = useState<'right' | 'left' | undefined>();
 
-    const userKnewCard = (knew: boolean) => {
+    const userKnewCard = useCallback((knew: boolean) => {
         if (!animating) {
             setAnimating(true);
             setAnimation(knew ? 'right' : 'left');
         }
-    };
+    }, [ animating ]);
 
     // When currentDeckIdParam changes, fetch and configure the specific deck
     useEffect(() => {
@@ -122,7 +122,7 @@ export function Deck() {
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, [ animating, cardFlipped, deck, userKnewCard ]);
+    }, [ animating, cardFlipped, userKnewCard ]);
 
 
     const advance = (knewCard: boolean) => {

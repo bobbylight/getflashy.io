@@ -15,7 +15,7 @@
     "tsc": "tsc --noEmit"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=24"
   },
   "dependencies": {
     "bootstrap": "5.3.8",
