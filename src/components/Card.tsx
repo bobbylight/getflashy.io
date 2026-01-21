@@ -10,15 +10,20 @@ interface CardProps {
   onAnimationEnd?: () => void;
   userKnewCard?: (knew: boolean) => void;
   toggleVisibleSide?: (event: MouseEvent<HTMLDivElement>) => void;
+  icon?: { name: string; color: string };
+  deckName?: string;
 }
 
 /**
  * A rendered card (either the current card, or the one beneath it).
  * This is a purely presentational component, controlled by its parent (Deck).
  */
-export const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCard, toggleVisibleSide }: CardProps) => {
+export const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, userKnewCard, toggleVisibleSide, icon, deckName }: CardProps) => {
     const [ visibility, setVisibility ] = useState<CSSProperties['visibility']>('visible');
     const [ dragStartX, setDragStartX ] = useState<number>(-1);
+
+    // Normalize icon name to Font Awesome 4 format (fa fa-{name})
+    const iconClass = icon ? `fa ${icon.name.startsWith('fa-') ? icon.name : `fa-${icon.name}`}` : undefined;
 
     const handleClick = (e: MouseEvent<HTMLDivElement>) => {
         if (toggleVisibleSide) {
@@ -53,29 +58,24 @@ export const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, user
         onAnimationEnd?.();
     };
 
-    const side = flipped ? card.back : card.front;
-
     const cardStyle: CSSProperties = {
         visibility: visibility,
     };
 
-    const markedContext1 = side.context1 ? marked(side.context1) : undefined;
-    const context1Style: CSSProperties = {
-        display: markedContext1 ? 'block' : 'none',
-    };
+    // Front side content
+    const frontContext1 = card.front.context1 ? marked(card.front.context1) : undefined;
+    const frontContext2 = card.front.context2 ? marked(card.front.context2) : undefined;
 
-    const markedContext2 = side.context2 ? marked(side.context2) : undefined;
-    const context2Style: CSSProperties = {
-        display: markedContext2 ? 'block' : 'none',
-    };
-
-    const frontHintStyle: CSSProperties = {
-        display: flipped ? 'block' : 'none',
-    };
+    // Back side content
+    const backContext1 = card.back.context1 ? marked(card.back.context1) : undefined;
+    const backContext2 = card.back.context2 ? marked(card.back.context2) : undefined;
 
     let className = 'card';
     if (isTopCard) {
         className += ' topCard';
+    }
+    if (flipped) {
+        className += ' flipped';
     }
     if (animation) {
         className += animation === 'right' ? ' sliding-right' : ' sliding-left';
@@ -87,29 +87,54 @@ export const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, user
                 style={cardStyle}
                 draggable={isTopCard}
                 onClick={handleClick}
-                onDragStart={handleDrag} // Changed from onDrag to onDragStart for correct behavior
+                onDragStart={handleDrag}
                 onDragEnd={handleDragEnd}
                 onAnimationEnd={handleAnimationEnd}
             >
-
-                <div className="card-top"></div>
-
-                <div className="card-content">
-                    <div className="card-content-wrapper">
-                        <div className="main-card-content">
-                            {side.text}
-                        </div>
-                        {/* eslint-disable-next-line @typescript-eslint/naming-convention */}
-                        <div className="context-1" style={context1Style} dangerouslySetInnerHTML={{ __html: markedContext1 ?? '' }}>
-                        </div>
-                        {/* eslint-disable-next-line @typescript-eslint/naming-convention */}
-                        <div className="context-2" style={context2Style} dangerouslySetInnerHTML={{ __html: markedContext2 ?? '' }}>
+                {/* Front face */}
+                <div className="card-face card-front">
+                    <div className="card-top">
+                        {iconClass && <i className={`${iconClass} card-icon`} aria-hidden="true"></i>}
+                        {deckName && <span className="deck-name">{deckName}</span>}
+                    </div>
+                    <div className="card-content">
+                        <div className="card-content-wrapper">
+                            <div className="main-card-content">
+                                {card.front.text}
+                            </div>
+                            {/* eslint-disable-next-line @typescript-eslint/naming-convention */}
+                            <div className="context-1" style={{ display: frontContext1 ? 'block' : 'none' }} dangerouslySetInnerHTML={{ __html: frontContext1 ?? '' }}>
+                            </div>
+                            {/* eslint-disable-next-line @typescript-eslint/naming-convention */}
+                            <div className="context-2" style={{ display: frontContext2 ? 'block' : 'none' }} dangerouslySetInnerHTML={{ __html: frontContext2 ?? '' }}>
+                            </div>
                         </div>
                     </div>
+                    <div className="hint"></div>
                 </div>
 
-                <div className="frontHint" style={frontHintStyle}>
-                    {card.front.text}
+                {/* Back face */}
+                <div className="card-face card-back">
+                    <div className="card-top">
+                        {iconClass && <i className={`${iconClass} card-icon`} aria-hidden="true"></i>}
+                        {deckName && <span className="deck-name">{deckName}</span>}
+                    </div>
+                    <div className="card-content">
+                        <div className="card-content-wrapper">
+                            <div className="main-card-content">
+                                {card.back.text}
+                            </div>
+                            {/* eslint-disable-next-line @typescript-eslint/naming-convention */}
+                            <div className="context-1" style={{ display: backContext1 ? 'block' : 'none' }} dangerouslySetInnerHTML={{ __html: backContext1 ?? '' }}>
+                            </div>
+                            {/* eslint-disable-next-line @typescript-eslint/naming-convention */}
+                            <div className="context-2" style={{ display: backContext2 ? 'block' : 'none' }} dangerouslySetInnerHTML={{ __html: backContext2 ?? '' }}>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="hint">
+                        {card.front.text}
+                    </div>
                 </div>
             </div>
         </div>
