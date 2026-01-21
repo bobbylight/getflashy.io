@@ -203,7 +203,7 @@ export function Deck() {
                     <Timer startTime={startTime}></Timer>
                     {nextCard &&
                         <div style={nextCardStyle}>
-                            <Card key={nextCard.front.text} card={nextCard} flipped={false} isTopCard={false} />
+                            <Card key={nextCard.front.text} card={nextCard} flipped={false} isTopCard={false} icon={deck.icon} deckName={deck.name} />
                         </div>
                     }
                     {card &&
@@ -216,6 +216,8 @@ export function Deck() {
                             onAnimationEnd={handleAnimationEnd}
                             userKnewCard={userKnewCard}
                             toggleVisibleSide={toggleCardVisibleSide}
+                            icon={deck.icon}
+                            deckName={deck.name}
                         />
                     }
                     <div>

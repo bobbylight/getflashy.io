@@ -2,7 +2,7 @@ export default {
 
     name: 'Vocabulary Words',
     icon: {
-        name: 'comment-o',
+        name: 'comment',
         color: 'black'
     },
 
