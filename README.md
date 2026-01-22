@@ -1,4 +1,8 @@
 # getflashy - Source code for getflashy.io
+![Build](https://github.com/bobbylight/getflashy.io/actions/workflows/node.js.yml/badge.svg)
+![Lint](https://github.com/bobbylight/getflashy.io/actions/workflows/lint.yml/badge.svg)
+[![codecov](https://codecov.io/gh/bobbylight/getflashy.io/graph/badge.svg?token=SWVBZsXKuQ)](https://codecov.io/gh/bobbylight/getflashy.io)
+
 `getflashy` is a flash card webapp.  I'm building it to learn
 trendy new web technologies while memorizing a bunch of words.
 

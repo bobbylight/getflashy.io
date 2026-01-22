@@ -31,7 +31,9 @@ export const DecksProvider = ({ children}: { children: ReactNode }) => {
                 if (e instanceof Error) {
                     setError(e.message);
                 }
-                throw e;
+                else {
+                    setError('Unknown error occurred loading decks');
+                }
             }
             finally {
                 setIsLoading(false);

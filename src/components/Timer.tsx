@@ -18,7 +18,7 @@ export const Timer = ({ startTime }: TimerProps) => {
     }, []); // Memoize as it's a pure function
 
     useEffect(() => {
-    // On rerender, clear interval in preparation for a new one
+        // On rerender, clear interval in preparation for a new one
         const cleanup = () => {
             if (intervalHandleRef.current !== null) {
                 window.clearInterval(intervalHandleRef.current);

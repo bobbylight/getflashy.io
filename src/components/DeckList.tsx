@@ -26,7 +26,7 @@ export function DeckList() {
 
     return (
         <div className="container">
-            <DeckFilter label="Filter decks:" helpText="" onChange={onDeckFilterChange} />
+            <DeckFilter label="Filter decks:" onChange={onDeckFilterChange} />
             <div className="deck-buttons">
                 {filteredDecks.map((deck) =>
                     <DeckButton key={deck.id} deck={deck} onClick={handleDeckClick} />,
