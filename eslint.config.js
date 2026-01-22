@@ -94,7 +94,7 @@ export default [
             semi: "off",
             "space-before-function-paren": ["error", "never"],
             // Extra vitest lint rules not in the "recommended" set
-            "vitest/consistent-test-filename": ["error", { "pattern": ".*\\.spec\\.ts$"}],
+            "vitest/consistent-test-filename": ["error", { "pattern": ".*\\.test\\.tsx?$"}],
             "vitest/consistent-test-it": ["error", { "fn": "it", "withinDescribe": "it" }],
             "vitest/consistent-vitest-vi": "error",
             "vitest/hoisted-apis-on-top": "error",
