@@ -9,6 +9,7 @@ import { Results } from './components/Results';
 import { DecksProvider } from './contexts/DecksContext';
 
 import 'bootswatch/dist/flatly/bootstrap.css';
+// import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.css';
 import './css/app.css';
 

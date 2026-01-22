@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export function AppNavbar() {
     return (
-        <Navbar expand="lg" bg="primary" variant="dark">
+        <Navbar expand="lg" variant="dark" className="app-navbar">
             <Container>
                 <Navbar.Brand as={Link} to="/">
                     <i className="fa fa-bolt" aria-hidden="true"></i> Flashy
