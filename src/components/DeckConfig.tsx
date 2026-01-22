@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Col, Form, ButtonGroup, Button, Card as BootstrapCard } from 'react-bootstrap';
+import { Form, ButtonGroup, Button, Card as BootstrapCard } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 
 interface DeckConfigParams {
@@ -53,68 +53,71 @@ export function DeckConfig() {
             <BootstrapCard className="app-form">
                 <BootstrapCard.Header className="config-header">
                     <h2>Get Ready!</h2>
-                    <p>
-                        Let us know how you'd like to go through this deck of flashcards.
-                    </p>
+                    <p>Configure how you'd like to study this deck</p>
                 </BootstrapCard.Header>
 
                 <BootstrapCard.Body>
                     <Form>
+                        <div className="config-section">
+                            <div className="config-label">Show me:</div>
+                            <ButtonGroup>
+                                <Button
+                                    onClick={() => handleSetShowSide('front')}
+                                    variant={showSide === 'front' ? 'primary' : 'secondary'}
+                                >
+                                    Front side
+                                </Button>
+                                <Button
+                                    onClick={() => handleSetShowSide('back')}
+                                    variant={showSide === 'back' ? 'primary' : 'secondary'}
+                                >
+                                    Back side
+                                </Button>
+                            </ButtonGroup>
+                            <div className="config-hint">Front side is typical</div>
+                        </div>
 
-                        <Form.Group as={Col} controlId="formShowSide" className="mb-3">
-                            <Form.Label column sm={3} className="config-label">Show me:</Form.Label>
-                            <Col sm={8}>
-                                <ButtonGroup>
-                                    <Button onClick={() => {
-                                        handleSetShowSide('front');
-                                    }}
-                                    variant={showSide === 'front' ? 'primary' : 'secondary'}>Front side</Button>
-                                    <Button onClick={() => {
-                                        handleSetShowSide('back');
-                                    }}
-                                    variant={showSide !== 'front' ? 'primary' : 'secondary'}>Back side</Button>
-                                </ButtonGroup>
-                                <Form.Text className="inline-help-block text-muted">("Front side" is typical)</Form.Text>
-                            </Col>
-                        </Form.Group>
+                        <div className="config-section">
+                            <div className="config-label">Show details:</div>
+                            <ButtonGroup>
+                                <Button
+                                    onClick={() => handleSetShowDetails('always')}
+                                    variant={showDetails === 'always' ? 'primary' : 'secondary'}
+                                >
+                                    Always
+                                </Button>
+                                <Button
+                                    onClick={() => handleSetShowDetails('never')}
+                                    variant={showDetails === 'never' ? 'primary' : 'secondary'}
+                                >
+                                    Never
+                                </Button>
+                                <Button
+                                    onClick={() => handleSetShowDetails('beforeFlipping')}
+                                    variant={showDetails === 'beforeFlipping' ? 'primary' : 'secondary'}
+                                >
+                                    Before flip
+                                </Button>
+                            </ButtonGroup>
+                        </div>
 
-                        <Form.Group as={Col} controlId="formShowDetails" className="mb-3">
-                            <Form.Label column sm={3} className="config-label">Show details:</Form.Label>
-                            <Col sm={8}>
-                                <ButtonGroup>
-                                    <Button onClick={() => {
-                                        handleSetShowDetails('always');
-                                    }}
-                                    variant={showDetails === 'always' ? 'primary' : 'secondary'}>Always</Button>
-                                    <Button onClick={() => {
-                                        handleSetShowDetails('never');
-                                    }}
-                                    variant={showDetails === 'never' ? 'primary' : 'secondary'}>Never</Button>
-                                    <Button onClick={() => {
-                                        handleSetShowDetails('beforeFlipping');
-                                    }}
-                                    variant={showDetails === 'beforeFlipping' ? 'primary' : 'secondary'}>Before flipping</Button>
-                                </ButtonGroup>
-                            </Col>
-                        </Form.Group>
-
-                        <Form.Group as={Col} controlId="formRandomize" className="mb-3">
-                            <Form.Label column sm={3} className="config-label">Miscellaney:</Form.Label>
-                            <Col sm={8}>
-                                <Form.Check
-                                    type="checkbox"
-                                    label="Randomize"
-                                    checked={randomize}
-                                    onChange={handleToggleRandomize}
-                                />
-                            </Col>
-                        </Form.Group>
-
+                        <div className="config-section">
+                            <div className="config-label">Options:</div>
+                            <Form.Check
+                                type="checkbox"
+                                id="randomize-checkbox"
+                                label="Shuffle card order"
+                                checked={randomize}
+                                onChange={handleToggleRandomize}
+                            />
+                        </div>
                     </Form>
                 </BootstrapCard.Body>
 
                 <BootstrapCard.Footer className="config-submit-button-area">
-                    <Button variant="success" onClick={handleStartDeck}>Start flipping!</Button>
+                    <Button variant="success" onClick={handleStartDeck}>
+                        Start Studying
+                    </Button>
                 </BootstrapCard.Footer>
             </BootstrapCard>
         </div>

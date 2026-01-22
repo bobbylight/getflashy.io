@@ -78,6 +78,7 @@ export default [
                 { selector: "typeParameter", format: ["PascalCase"] },
                 { selector: "variable", modifiers: ["const"], format: ["camelCase", "PascalCase", "UPPER_CASE"] },
             ],
+            "@typescript-eslint/no-confusing-void-expression": ["error", { "ignoreArrowShorthand": true }],
             "@typescript-eslint/no-empty-function": 0,
             "@typescript-eslint/no-unnecessary-condition": ["error", { "allowConstantLoopConditions": true }],
             "@typescript-eslint/no-unused-vars": 0,
