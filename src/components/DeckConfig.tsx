@@ -115,6 +115,9 @@ export function DeckConfig() {
                 </BootstrapCard.Body>
 
                 <BootstrapCard.Footer className="config-submit-button-area">
+                    <Button variant="outline-secondary" onClick={() => void navigate('/')}>
+                        Back
+                    </Button>
                     <Button variant="success" onClick={handleStartDeck}>
                         Start Studying
                     </Button>
