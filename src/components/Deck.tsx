@@ -4,6 +4,7 @@ import { Deck as FullDeck } from '../api';
 import { Card } from './Card';
 import { DeckStatus } from './DeckStatus';
 import { Timer } from './Timer';
+import { ProgressBar } from './ProgressBar';
 
 // Utility function for Fisher-Yates shuffle
 function shuffleArray<T>(array: T[]): T[] {
@@ -189,11 +190,12 @@ export function Deck() {
 
     const card = deck.cards[curCard];
     const nextCard = curCard < deck.cards.length - 1 ? deck.cards[curCard + 1] : null;
+    const percent = curCard / deck.cards.length * 100.0;
 
     return (
         <div style={fillHeight}>
             <div className="deck">
-                {/*<ProgressBar spinner={false} percent={percent}/>*/}
+                <ProgressBar percent={percent} color="var(--brand-color-light)"/>
                 <div className="deck-nav left-nav" onClick={() => {
                     userKnewCard(false);
                 }}>
