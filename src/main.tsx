@@ -10,7 +10,7 @@ import { DecksProvider } from './contexts/DecksContext';
 
 import 'bootswatch/dist/flatly/bootstrap.css';
 // import 'bootstrap/dist/css/bootstrap.css';
-import 'font-awesome/css/font-awesome.css';
+import '@fortawesome/fontawesome-free/css/all.css';
 import './css/app.css';
 
 const container = document.getElementById('app-content');

@@ -39,7 +39,7 @@ export const Timer = ({ startTime }: TimerProps) => {
 
     return (
         <div className="timer">
-            <i className="fa fa-clock-o" aria-hidden="true"></i> {timespanStr}
+            <i className="fa-regular fa-clock" aria-hidden="true"></i> {timespanStr}
         </div>
     );
 };

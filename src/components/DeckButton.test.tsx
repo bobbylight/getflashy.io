@@ -47,7 +47,7 @@ describe('DeckButton', () => {
             const deck = createMockDeck({ icon: undefined });
             const { container } = render(<DeckButton deck={deck} onClick={vi.fn()} />);
 
-            const icon = container.querySelector('.fa-smile-o');
+            const icon = container.querySelector('.fa-face-smile');
             expect(icon).toBeInTheDocument();
         });
 

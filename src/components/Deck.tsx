@@ -199,7 +199,7 @@ export function Deck() {
                 <div className="deck-nav left-nav" onClick={() => {
                     userKnewCard(false);
                 }}>
-                    <i className="fa fa-chevron-left" aria-hidden="true"></i>
+                    <i className="fa-solid fa-chevron-left" aria-hidden="true"></i>
                 </div>
                 <div className="deck-card-section">
                     <Timer startTime={startTime}></Timer>
@@ -230,7 +230,7 @@ export function Deck() {
                 <div className="deck-nav right-nav" onClick={() => {
                     userKnewCard(true);
                 }}>
-                    <i className="fa fa-chevron-right" aria-hidden="true" ></i>
+                    <i className="fa-solid fa-chevron-right" aria-hidden="true"></i>
                 </div>
             </div>
         </div>

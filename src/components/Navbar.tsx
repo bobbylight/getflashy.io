@@ -6,7 +6,7 @@ export function AppNavbar() {
         <Navbar expand="lg" variant="dark" className="app-navbar">
             <Container>
                 <Navbar.Brand as={Link} to="/">
-                    <i className="fa fa-bolt" aria-hidden="true"></i> Flashy
+                    <i className="fa-solid fa-bolt" aria-hidden="true"></i> Flashy
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
