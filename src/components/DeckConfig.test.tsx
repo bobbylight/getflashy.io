@@ -65,6 +65,12 @@ describe('DeckConfig', () => {
 
             expect(screen.getByText('Start Studying')).toBeInTheDocument();
         });
+
+        it('renders back button', () => {
+            renderDeckConfig();
+
+            expect(screen.getByText('Back')).toBeInTheDocument();
+        });
     });
 
     describe('default state', () => {
@@ -170,6 +176,15 @@ describe('DeckConfig', () => {
     });
 
     describe('navigation', () => {
+        it('navigates to home when back button is clicked', async() => {
+            const user = userEvent.setup();
+            renderDeckConfig();
+
+            await user.click(screen.getByText('Back'));
+
+            expect(mockNavigate).toHaveBeenCalledWith('/');
+        });
+
         it('navigates with minimal query params when using defaults', async() => {
             const user = userEvent.setup();
             renderDeckConfig();
