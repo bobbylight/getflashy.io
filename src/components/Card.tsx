@@ -22,8 +22,8 @@ export const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, user
     const [ visibility, setVisibility ] = useState<CSSProperties['visibility']>('visible');
     const [ dragStartX, setDragStartX ] = useState<number>(-1);
 
-    // Normalize icon name to Font Awesome 4 format (fa fa-{name})
-    const iconClass = icon ? `fa ${icon.name.startsWith('fa-') ? icon.name : `fa-${icon.name}`}` : undefined;
+    // Normalize icon name to Font Awesome 7 format (fa-solid fa-{name})
+    const iconClass = icon ? `fa-solid ${icon.name.startsWith('fa-') ? icon.name : `fa-${icon.name}`}` : undefined;
 
     const handleClick = (e: MouseEvent<HTMLDivElement>) => {
         if (toggleVisibleSide) {

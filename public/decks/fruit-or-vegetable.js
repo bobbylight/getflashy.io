@@ -2,7 +2,7 @@ export default {
 
     name: 'Fruit or Vegetable',
     icon: {
-        name: 'apple',
+        name: 'apple-whole',
         color: '#ff6060'
     },
 

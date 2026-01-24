@@ -7,7 +7,7 @@ interface DeckButtonProps {
 
 export const DeckButton = ({ deck, onClick }: DeckButtonProps) => {
     const date = new Date(deck.modified).toDateString();
-    const icon = deck.icon?.name ?? 'smile-o';
+    const icon = deck.icon?.name ?? 'face-smile';
     const style = {
         color: deck.icon?.color ?? 'black',
     };
@@ -18,7 +18,7 @@ export const DeckButton = ({ deck, onClick }: DeckButtonProps) => {
         } }>
             <div className="deck-details">
                 <div>
-                    <div className="deck-icon"><i className={'fa fa-' + icon} style={style} aria-hidden="true"></i></div>
+                    <div className="deck-icon"><i className={'fa-solid fa-' + icon} style={style} aria-hidden="true"></i></div>
                     <div className="deck-title">{deck.name}</div>
                     <div>{deck.size} cards</div>
                     <div>Uploaded {date}</div>

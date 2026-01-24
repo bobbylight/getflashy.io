@@ -65,7 +65,7 @@ describe('Card', () => {
             );
 
             const icon = container.querySelector('.card-icon');
-            expect(icon).toHaveClass('fa', 'fa-star');
+            expect(icon).toHaveClass('fa-solid', 'fa-star');
         });
 
         it('keeps icon name with fa- prefix', () => {
@@ -74,7 +74,7 @@ describe('Card', () => {
             );
 
             const icon = container.querySelector('.card-icon');
-            expect(icon).toHaveClass('fa', 'fa-heart');
+            expect(icon).toHaveClass('fa-solid', 'fa-heart');
         });
 
         it('does not render icon when not provided', () => {
