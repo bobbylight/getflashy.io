@@ -433,7 +433,17 @@ describe('Deck', () => {
             fireEvent.animationEnd(animatedCard);
 
             await waitFor(() => {
-                expect(mockNavigate).toHaveBeenCalledWith('/results/test-deck-123');
+                expect(mockNavigate).toHaveBeenCalledWith(
+                    '/results/test-deck-123',
+                    {
+                        state: {
+                            correctCount: 1,
+                            elapsedSeconds: expect.any(Number) as number,
+                            totalCards: 1,
+                            deckName: 'Spanish Vocabulary',
+                        },
+                    },
+                );
             });
         });
     });

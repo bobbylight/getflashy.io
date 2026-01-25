@@ -8,16 +8,32 @@ describe('ProgressBar', () => {
     });
 
     describe('rendering', () => {
-        it('renders the container element', () => {
+        it('renders the topline container by default', () => {
             const { container } = render(<ProgressBar percent={50} />);
 
-            expect(container.querySelector('.progress-bar-container')).toBeInTheDocument();
+            expect(container.querySelector('.progress-bar-topline')).toBeInTheDocument();
         });
 
         it('renders the fill element', () => {
             const { container } = render(<ProgressBar percent={50} />);
 
             expect(container.querySelector('.progress-bar-fill')).toBeInTheDocument();
+        });
+    });
+
+    describe('variant handling', () => {
+        it('renders topline variant when specified', () => {
+            const { container } = render(<ProgressBar percent={50} variant="topline" />);
+
+            expect(container.querySelector('.progress-bar-topline')).toBeInTheDocument();
+            expect(container.querySelector('.progress-bar-standard')).not.toBeInTheDocument();
+        });
+
+        it('renders standard variant when specified', () => {
+            const { container } = render(<ProgressBar percent={50} variant="standard" />);
+
+            expect(container.querySelector('.progress-bar-standard')).toBeInTheDocument();
+            expect(container.querySelector('.progress-bar-topline')).not.toBeInTheDocument();
         });
     });
 
@@ -59,13 +75,6 @@ describe('ProgressBar', () => {
     });
 
     describe('color handling', () => {
-        it('uses default brand color when no color provided', () => {
-            const { container } = render(<ProgressBar percent={50} />);
-
-            const fill = container.querySelector('.progress-bar-fill');
-            expect(fill).toHaveStyle({ backgroundColor: 'var(--brand-color-dark)' });
-        });
-
         it('uses custom color when provided', () => {
             const { container } = render(<ProgressBar percent={50} color="#22c55e" />);
 

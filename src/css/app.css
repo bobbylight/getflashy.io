@@ -453,7 +453,7 @@ html, body {
   border-radius: 3rem;
 }
 
-.progress-bar-container {
+.progress-bar-topline {
   position: fixed;
   top: 0;
   left: 0;
@@ -464,7 +464,52 @@ html, body {
 
   .progress-bar-fill {
     height: 100%;
-    border-radius: 5px;
     transition: width 0.3s ease;
+  }
+}
+
+.progress-bar-standard {
+  width: 100%;
+  height: 24px;
+  background: #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 12px;
+    transition: width 1s ease-out;
+  }
+}
+
+.results-stats {
+  text-align: center;
+
+  .results-score {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .results-progress {
+    margin-bottom: 1.5rem;
+
+    .results-percent {
+      margin-top: 0.5rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--brand-color-dark);
+    }
+  }
+
+  .results-time {
+    font-size: 1rem;
+    color: var(--less-important-text-color);
+    margin-bottom: 1.5rem;
+  }
+
+  .results-phrase {
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--brand-color-dark);
   }
 }
