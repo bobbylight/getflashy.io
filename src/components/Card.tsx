@@ -81,19 +81,20 @@ export const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, user
     if (flipped) {
         className += ' flipped';
     }
+
+    let wrapperClassName = 'card-wrapper';
     if (animation) {
-        className += animation === 'right' ? ' sliding-right' : ' sliding-left';
+        wrapperClassName += animation === 'right' ? ' sliding-right' : ' sliding-left';
     }
 
     return (
-        <div className="card-wrapper">
+        <div className={wrapperClassName} onAnimationEnd={handleAnimationEnd}>
             <div className={className}
                 style={cardStyle}
                 draggable={isTopCard}
                 onClick={handleClick}
                 onDrag={handleDrag}
                 onDragEnd={handleDragEnd}
-                onAnimationEnd={handleAnimationEnd}
             >
                 {/* Front face */}
                 <div className="card-face card-front">
