@@ -13,9 +13,9 @@ trendy new web technologies while memorizing a bunch of words.
 |------------------------------------------| --- |
 | <p align="center">**Picking a deck**</p> | <p align="center">**Configuring the session**</p> |
 
-| ![Going Through Deck](img/img_3.png) |  ![Viewing Results](img/img_4.png) |
-|--------------------------------------| --- |
-| **Going through the deck**               | **Viewing the results**               |
+| ![Going Through Deck](img/img_3.png)             | ![Viewing Results](img/img_4.png)              |
+|--------------------------------------------------|------------------------------------------------|
+| <p align="center">**Going through the deck**</p> | <p align="center">**Viewing the results** </p> |
 
 ## Hacking
 `getflashy` is written in TypeScript. It's built

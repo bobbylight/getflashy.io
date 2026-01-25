@@ -245,7 +245,7 @@ describe('Card', () => {
             const card = container.querySelector('.card');
             if (!card) throw new Error('Card not found');
 
-            fireEvent.dragStart(card, { screenX: 100 });
+            fireEvent.drag(card, { screenX: 100 });
 
             expect(card).toHaveStyle({ visibility: 'hidden' });
         });
@@ -256,7 +256,7 @@ describe('Card', () => {
             const card = container.querySelector('.card');
             if (!card) throw new Error('Card not found');
 
-            fireEvent.dragStart(card, { screenX: 100 });
+            fireEvent.drag(card, { screenX: 100 });
 
             expect(card).toHaveStyle({ visibility: 'visible' });
         });
@@ -270,11 +270,11 @@ describe('Card', () => {
             const card = container.querySelector('.card');
             if (!card) throw new Error('Card not found');
 
-            // Create drag events with screenX - jsdom doesn't have DragEvent so we use Event
+            // First drag event captures the start position
             act(() => {
-                const dragStartEvent = new Event('dragstart', { bubbles: true });
-                Object.defineProperty(dragStartEvent, 'screenX', { value: 100, writable: false });
-                card.dispatchEvent(dragStartEvent);
+                const dragEvent = new Event('drag', { bubbles: true });
+                Object.defineProperty(dragEvent, 'screenX', { value: 100, writable: false });
+                card.dispatchEvent(dragEvent);
             });
 
             act(() => {
@@ -295,11 +295,11 @@ describe('Card', () => {
             const card = container.querySelector('.card');
             if (!card) throw new Error('Card not found');
 
-            // Create drag events with screenX - jsdom doesn't have DragEvent so we use Event
+            // First drag event captures the start position
             act(() => {
-                const dragStartEvent = new Event('dragstart', { bubbles: true });
-                Object.defineProperty(dragStartEvent, 'screenX', { value: 200, writable: false });
-                card.dispatchEvent(dragStartEvent);
+                const dragEvent = new Event('drag', { bubbles: true });
+                Object.defineProperty(dragEvent, 'screenX', { value: 200, writable: false });
+                card.dispatchEvent(dragEvent);
             });
 
             act(() => {
@@ -320,7 +320,7 @@ describe('Card', () => {
             const card = container.querySelector('.card');
             if (!card) throw new Error('Card not found');
 
-            fireEvent.dragStart(card, { screenX: 100 });
+            fireEvent.drag(card, { screenX: 100 });
             fireEvent.dragEnd(card, { screenX: 150 }); // delta = 50, not enough
 
             expect(userKnewCard).not.toHaveBeenCalled();
@@ -335,7 +335,7 @@ describe('Card', () => {
             const card = container.querySelector('.card');
             if (!card) throw new Error('Card not found');
 
-            fireEvent.dragStart(card, { screenX: 100 });
+            fireEvent.drag(card, { screenX: 100 });
             fireEvent.dragEnd(card, { screenX: 250 });
 
             expect(userKnewCard).not.toHaveBeenCalled();
@@ -347,7 +347,7 @@ describe('Card', () => {
             const card = container.querySelector('.card');
             if (!card) throw new Error('Card not found');
 
-            fireEvent.dragStart(card, { screenX: 100 });
+            fireEvent.drag(card, { screenX: 100 });
             expect(card).toHaveStyle({ visibility: 'hidden' });
 
             fireEvent.dragEnd(card, { screenX: 150 });
