@@ -181,20 +181,20 @@ describe('Card', () => {
         it('has sliding-right class when animation is right', () => {
             const { container } = render(<Card card={createMockCard()} flipped={false} isTopCard={true} animation="right" />);
 
-            expect(container.querySelector('.card.sliding-right')).toBeInTheDocument();
+            expect(container.querySelector('.card-wrapper.sliding-right')).toBeInTheDocument();
         });
 
         it('has sliding-left class when animation is left', () => {
             const { container } = render(<Card card={createMockCard()} flipped={false} isTopCard={true} animation="left" />);
 
-            expect(container.querySelector('.card.sliding-left')).toBeInTheDocument();
+            expect(container.querySelector('.card-wrapper.sliding-left')).toBeInTheDocument();
         });
 
         it('does not have animation class when animation is undefined', () => {
             const { container } = render(<Card card={createMockCard()} flipped={false} isTopCard={true} />);
 
-            expect(container.querySelector('.card.sliding-right')).not.toBeInTheDocument();
-            expect(container.querySelector('.card.sliding-left')).not.toBeInTheDocument();
+            expect(container.querySelector('.card-wrapper.sliding-right')).not.toBeInTheDocument();
+            expect(container.querySelector('.card-wrapper.sliding-left')).not.toBeInTheDocument();
         });
     });
 

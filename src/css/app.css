@@ -82,26 +82,22 @@ html, body {
 @keyframes slide-right {
   from {
     opacity: 1;
-    margin-left: 0;
-    width: 100%;
+    transform: translateX(0);
   }
   to {
     opacity: 0;
-    margin-left: 500px;
-    width: 100%;
+    transform: translateX(500px);
   }
 }
 
 @keyframes slide-left {
   from {
     opacity: 1;
-    margin-left: 0;
-    width: 100%;
+    transform: translateX(0);
   }
   to {
     opacity: 0;
-    margin-left: -500px;
-    width: 100%;
+    transform: translateX(-500px);
   }
 }
 
@@ -151,6 +147,14 @@ html, body {
     overflow-x: visible;
     perspective: 1000px;
 
+    &.sliding-right {
+      animation: .5s slide-right forwards;
+    }
+
+    &.sliding-left {
+      animation: .5s slide-left forwards;
+    }
+
     .card {
       position: relative;
       transform-style: preserve-3d;
@@ -165,14 +169,6 @@ html, body {
 
       &.flipped {
         transform: rotateY(180deg);
-      }
-
-      &.sliding-right {
-        animation: .5s slide-right forwards;
-      }
-
-      &.sliding-left {
-        animation: .5s slide-left forwards;
       }
 
       .card-face {
