@@ -33,8 +33,12 @@ export const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, user
 
     const handleDrag = (e: DragEvent<HTMLDivElement>) => {
         if (!isTopCard) return;
-        setVisibility('hidden');
-        setDragStartX(e.screenX);
+        // Only capture the starting position on the first onDrag event.
+        // onDragStart was too problematic, so this is an alternative approach.
+        if (dragStartX === -1) {
+            setVisibility('hidden');
+            setDragStartX(e.screenX);
+        }
     };
 
     const handleDragEnd = (e: DragEvent<HTMLDivElement>) => {
@@ -87,7 +91,7 @@ export const Card = ({ card, flipped, isTopCard, animation, onAnimationEnd, user
                 style={cardStyle}
                 draggable={isTopCard}
                 onClick={handleClick}
-                onDragStart={handleDrag}
+                onDrag={handleDrag}
                 onDragEnd={handleDragEnd}
                 onAnimationEnd={handleAnimationEnd}
             >
