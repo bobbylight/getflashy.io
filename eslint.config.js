@@ -11,9 +11,7 @@ export default [
     ...tseslint.configs.stylisticTypeChecked,
 
     {
-        ignores: [
-            "vite.config.js",
-        ],
+        ignores: [],
     },
     {
         languageOptions: {
