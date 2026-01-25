@@ -82,22 +82,30 @@ html, body {
 @keyframes slide-right {
   from {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) translateY(0) rotate(0deg);
+  }
+  40% {
+    opacity: 0.6;
+    transform: translateX(200px) translateY(0) rotate(0deg);
   }
   to {
     opacity: 0;
-    transform: translateX(500px);
+    transform: translateX(500px) translateY(80px) rotate(10deg);
   }
 }
 
 @keyframes slide-left {
   from {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) translateY(0) rotate(0deg);
+  }
+  40% {
+    opacity: 0.6;
+    transform: translateX(-200px) translateY(0) rotate(0deg);
   }
   to {
     opacity: 0;
-    transform: translateX(-500px);
+    transform: translateX(-500px) translateY(80px) rotate(-10deg);
   }
 }
 
@@ -148,11 +156,11 @@ html, body {
     perspective: 1000px;
 
     &.sliding-right {
-      animation: .5s slide-right forwards;
+      animation: .5s slide-right linear forwards;
     }
 
     &.sliding-left {
-      animation: .5s slide-left forwards;
+      animation: .5s slide-left linear forwards;
     }
 
     .card {
