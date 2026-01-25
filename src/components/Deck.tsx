@@ -135,7 +135,15 @@ export function Deck() {
             setAnimating(false);
         }
         else if (deck) {
-            void navigate(`/results/${currentDeckIdParam}`);
+            const elapsedSeconds = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+            void navigate(`/results/${currentDeckIdParam}`, {
+                state: {
+                    correctCount: correctCount + (knewCard ? 1 : 0),
+                    totalCards: deck.cards.length,
+                    elapsedSeconds,
+                    deckName: deck.name,
+                },
+            });
         }
     };
 
