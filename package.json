@@ -1,6 +1,6 @@
 {
   "name": "getflashy.io",
-  "version": "0.3.0",
+  "version": "0.5.0",
   "private": true,
   "license": "MIT",
   "description": "Source code for getflashy.io",
@@ -13,7 +13,8 @@
     "lint:fix": "eslint --fix src/",
     "start": "node server.js",
     "tsc": "tsc --noEmit",
-    "test": "vitest run --coverage"
+    "test": "vitest run --coverage",
+    "deploy": "node --env-file=.env scripts/deploy.js"
   },
   "engines": {
     "node": ">=24"
@@ -32,6 +33,7 @@
     "react-router-dom": "7.12.0"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.975.0",
     "@stylistic/eslint-plugin": "^5.7.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",

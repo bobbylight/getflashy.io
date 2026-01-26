@@ -1,0 +1,26 @@
+{
+    "id": "fruit-or-vegetable",
+    "name": "Fruit or Vegetable",
+    "icon": {
+        "name": "apple-whole",
+        "color": "#ff6060"
+    },
+    "cards": [
+        {
+            "front": {
+                "text": "Apple"
+            },
+            "back": {
+                "text": "fruit"
+            }
+        },
+        {
+            "front": {
+                "text": "Green Bean"
+            },
+            "back": {
+                "text": "veggie"
+            }
+        }
+    ]
+}

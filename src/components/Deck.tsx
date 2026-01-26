@@ -57,7 +57,7 @@ export function Deck() {
 
             // Fetch full deck data from API
             try {
-                const response = await fetch(`/api/decks/${currentDeckIdParam}`);
+                const response = await fetch(`/decks/${currentDeckIdParam}.json`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch specific deck data');
                 }

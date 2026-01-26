@@ -77,7 +77,7 @@ describe('Deck', () => {
             renderDeck();
 
             await waitFor(() => {
-                expect(globalThis.fetch).toHaveBeenCalledWith('/api/decks/test-deck-123');
+                expect(globalThis.fetch).toHaveBeenCalledWith('/decks/test-deck-123.json');
             });
         });
 

@@ -14,11 +14,13 @@ const deckDir = path.join(__dirname, 'public/decks');
 const files = fs.readdirSync(deckDir);
 
 for (const file of files) {
-    const id = file.substring(0, file.lastIndexOf('.'));
-    const module = await import(path.join(deckDir, id) + '.js');
-    decks[id] = module.default; // Load deck data as-is, append "metadata" fields below
+    if (!file.endsWith('.json')) continue;
+    const id = file.replace(/\.json$/, '');
+    const filePath = path.join(deckDir, file);
+    const content = fs.readFileSync(filePath, 'utf-8');
+    decks[id] = JSON.parse(content);
     decks[id].id = id;
-    decks[id].modified = fs.statSync(path.join(deckDir, file)).mtime;
+    decks[id].modified = fs.statSync(filePath).mtime;
 }
 
 console.log('Decks:', Object.keys(decks));
@@ -42,12 +44,12 @@ const createDeckMetadata = (decks) => {
     return metadata;
 };
 
-app.get('/api/decks', (req, res) => {
+app.get('/decks/metadata.json', (req, res) => {
     res.type('application/json');
     res.json(createDeckMetadata(decks));
 });
 
-app.get('/api/decks/:deckId', (req, res) => {
+app.get('/decks/:deckId.json', (req, res) => {
 
     res.type('application/json');
 

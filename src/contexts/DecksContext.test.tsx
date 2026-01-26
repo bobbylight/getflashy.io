@@ -41,7 +41,7 @@ describe('DecksContext', () => {
             );
 
             await waitFor(() => {
-                expect(globalThis.fetch).toHaveBeenCalledWith('/api/decks');
+                expect(globalThis.fetch).toHaveBeenCalledWith('/decks/metadata.json');
             });
         });
 
