@@ -128,6 +128,33 @@ describe('Results', () => {
                 expect(screen.getByText('80%')).toBeInTheDocument();
             });
         });
+
+        it('percent text animates through intermediate values', async() => {
+            vi.useRealTimers();
+            mockLocationState = createValidState({ correctCount: 10, totalCards: 10 });
+            const { container } = renderResults();
+
+            const getPercent = () => {
+                const el = container.querySelector('.results-percent');
+                return parseInt(el?.textContent ?? '0', 10);
+            };
+
+            // Initially 0%
+            expect(getPercent()).toBe(0);
+
+            // Wait for animation to start (100ms delay) and progress partway
+            await new Promise(r => setTimeout(r, 400));
+
+            // Should be partway through animation (not 0, not 100 yet)
+            const midPercent = getPercent();
+            expect(midPercent).toBeGreaterThan(0);
+            expect(midPercent).toBeLessThan(100);
+
+            // Wait for animation to complete
+            await waitFor(() => {
+                expect(getPercent()).toBe(100);
+            });
+        });
     });
 
     describe('progress bar color', () => {

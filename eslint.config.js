@@ -46,7 +46,7 @@ export default [
             ...vitest.configs.recommended.rules,
             "no-unused-vars": 0,
             "@stylistic/array-bracket-spacing": ["error", "always"],
-            "@stylistic/arrow-parens": ["error", "always"],
+            "@stylistic/arrow-parens": ["error", "as-needed"],
             "@stylistic/arrow-spacing": "error",
             "@stylistic/brace-style": ["error", "stroustrup"],
             "@stylistic/comma-dangle": ["error", "always-multiline"],
