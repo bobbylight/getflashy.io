@@ -20,7 +20,7 @@ export const DecksProvider = ({ children}: { children: ReactNode }) => {
     useEffect(() => {
         const fetchDecks = async() => {
             try {
-                const repsonse = await fetch('/api/decks');
+                const repsonse = await fetch('/decks/metadata.json');
                 if (!repsonse.ok) {
                     throw new Error('Failed to fetch decks');
                 }

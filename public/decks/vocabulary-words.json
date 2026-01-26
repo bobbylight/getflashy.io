@@ -1,12 +1,11 @@
-export default {
-
-    name: 'Vocabulary Words',
-    icon: {
-        name: 'comment',
-        color: 'black'
+{
+    "id": "vocabulary-words",
+    "name": "Vocabulary Words",
+    "icon": {
+        "name": "comment",
+        "color": "black"
     },
-
-    cards: [
+    "cards": [
         {
             "front": {
                 "text": "Abase",
@@ -1720,4 +1719,4 @@ export default {
             }
         }
     ]
-};
+}

@@ -10,7 +10,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': {
+      // Only proxy .json requests to Express; let client routes through
+      '^/decks/.*\\.json$': {
         target: 'http://localhost:8080',
         changeOrigin: true
       }

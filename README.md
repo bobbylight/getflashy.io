@@ -18,10 +18,9 @@ trendy new web technologies while memorizing a bunch of words.
 | <p align="center">**Going through the deck**</p> | <p align="center">**Viewing the results** </p> |
 
 ## Hacking
-`getflashy` is written in TypeScript. It's built
-with vite, which makes developing super-easy. First, install
-all node modules and start an express server (port 8080 by default;
-configurable via $PORT environment variable):
+To test locally, you need to start a node server that serves deck typically generated at deploy
+time for production. To do so, first install all node modules and start an express server (port 8080
+by default; configurable via $PORT environment variable):
 
 ```js
 nvm use
@@ -29,15 +28,15 @@ npm install
 npm run start
 ```
 
-Then, in another window, build and watch the UI components in
-dev mode so changes are immediately visible in your browser
-after a refresh:
+Then, in another shell, build and watch the UI components in dev mode so changes are immediately visible
+in your browser after a refresh:
 
 ```js
 npm run dev
 ```
 
-### How it works
-vite serves the frontend from http://localhost:5473 and proxies API
-calls to http://localhost:8080.
+vite serves the frontend from http://localhost:5473 and proxies some API calls to http://localhost:8080
+(this content is dynamically generated and static resources fetched when in production).
 
+## Deploying to production
+Create your own `.env` file and run `npm run deploy`. The app is deployed to, and run from, an S3 bucket.
