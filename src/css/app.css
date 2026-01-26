@@ -125,7 +125,7 @@ html, body {
     color: #f0f0f0;
     cursor: pointer;
 
-    transition: color .5s, background .5s;
+    transition: color .4s, background .4s;
 
     &:hover {
       color: black;
@@ -156,11 +156,11 @@ html, body {
     perspective: 1000px;
 
     &.sliding-right {
-      animation: .5s slide-right linear forwards;
+      animation: .4s slide-right linear forwards;
     }
 
     &.sliding-left {
-      animation: .5s slide-left linear forwards;
+      animation: .4s slide-left linear forwards;
     }
 
     .card {

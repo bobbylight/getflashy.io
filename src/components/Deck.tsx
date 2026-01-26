@@ -127,10 +127,10 @@ export function Deck() {
 
 
     const advance = (knewCard: boolean) => {
-        setCorrectCount((prevCount) => prevCount + (knewCard ? 1 : 0));
+        setCorrectCount(prevCount => prevCount + (knewCard ? 1 : 0));
 
         if (deck && curCard < deck.cards.length - 1) {
-            setCurCard((prevCard) => prevCard + 1);
+            setCurCard(prevCard => prevCard + 1);
             setCardFlipped(false);
             setAnimating(false);
         }
@@ -173,7 +173,7 @@ export function Deck() {
     };
 
     const toggleCardVisibleSide = (e: MouseEvent<HTMLDivElement>) => {
-        setCardFlipped((prevFlipped) => !prevFlipped);
+        setCardFlipped(prevFlipped => !prevFlipped);
         e.stopPropagation();
         e.preventDefault();
     };

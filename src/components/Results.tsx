@@ -51,6 +51,7 @@ export function Results() {
     const navigate = useNavigate();
     const location: Location<ResultsState> = useLocation() as Location<ResultsState>;
     const [ animatedPercent, setAnimatedPercent ] = useState(0);
+    const [ displayedPercent, setDisplayedPercent ] = useState(0);
     const [ phrase ] = useState(getRandomPhrase);
 
     const state = location.state as ResultsState | null;
@@ -66,9 +67,29 @@ export function Results() {
         if (!isValidState(state)) {
             return;
         }
+        const finalPercent = Math.round(state.correctCount / state.totalCards * 100);
+
         // Trigger animation after mount, otherwise it would render immediately
         const timer = setTimeout(() => {
-            setAnimatedPercent(Math.round(state.correctCount / state.totalCards * 100));
+            setAnimatedPercent(finalPercent);
+
+            // Animate the displayed percentage over 1s to match progress bar transition
+            const duration = 1000;
+            const startTime = Date.now();
+
+            const animate = () => {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                // Use ease-out curve to match the progress bar CSS transition
+                const easedProgress = 1 - Math.pow(1 - progress, 3);
+                setDisplayedPercent(Math.round(easedProgress * finalPercent));
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            };
+
+            requestAnimationFrame(animate);
         }, 100);
         return () => clearTimeout(timer);
     }, [ state ]);
@@ -107,7 +128,7 @@ export function Results() {
                                 variant="standard"
                                 color={`var(--bs-${colorVar})`}
                             />
-                            <div className="results-percent">{animatedPercent}%</div>
+                            <div className="results-percent">{displayedPercent}%</div>
                         </div>
 
                         <div className="results-time">
